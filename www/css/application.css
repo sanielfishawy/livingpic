@@ -1,0 +1,456 @@
+/*
+ * photoswipe.css
+ * Copyright (c) %%year%% by Code Computerlove (http://www.codecomputerlove.com)
+ * Licensed under the MIT license
+ *
+ * Default styles for PhotoSwipe
+ * Avoid any position or dimension based styles
+ * where possible, unless specified already here.
+ * The gallery automatically works out gallery item
+ * positions etc.
+ */
+
+
+ 
+body.ps-active, body.ps-building, div.ps-active, div.ps-building
+{
+	background: #000;
+	overflow: hidden;
+}
+body.ps-active *, div.ps-active *
+{ 
+	-webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
+	display: none;
+}
+body.ps-active *:focus, div.ps-active *:focus 
+{ 
+	outline: 0; 
+}
+
+
+/* Document overlay */
+div.ps-document-overlay 
+{
+	background: #000;
+}
+
+
+/* UILayer */
+div.ps-uilayer { 
+	
+	background: #000;
+	cursor: pointer;
+	
+}
+
+
+/* Zoom/pan/rotate layer */
+div.ps-zoom-pan-rotate{
+	background: #000;
+}
+div.ps-zoom-pan-rotate *  { display: block; }
+
+
+/* Carousel */
+div.ps-carousel-item-loading 
+{ 
+	background: url(loader.gif) no-repeat center center; 
+}
+
+div.ps-carousel-item-error 
+{ 
+	background: url(error.gif) no-repeat center center; 
+}
+
+
+/* Caption */
+div.ps-caption
+{ 
+	background: #000000;
+	background: -moz-linear-gradient(top, #303130 0%, #000101 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#303130), color-stop(100%,#000101));
+	border-bottom: 1px solid #42403f;
+	color: #ffffff;
+	font-size: 13px;
+	font-family: "Lucida Grande", Helvetica, Arial,Verdana, sans-serif;
+	text-align: center;
+}
+div.ps-caption *  { display: inline; }
+
+div.ps-caption-bottom
+{ 
+	border-top: 1px solid #42403f;
+	border-bottom: none;
+	min-height: 44px;
+}
+
+div.ps-caption-content
+{
+	padding: 13px;
+	display: block;
+}
+
+
+/* Toolbar */
+div.ps-toolbar
+{ 
+	background: #000000;
+	background: -moz-linear-gradient(top, #303130 0%, #000101 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#303130), color-stop(100%,#000101));
+	border-top: 1px solid #42403f;
+	color: #ffffff;
+	font-size: 13px;
+	font-family: "Lucida Grande", Helvetica, Arial,Verdana, sans-serif;
+	text-align: center;
+	height: 44px;
+	display: table;
+	table-layout: fixed;
+}
+div.ps-toolbar * { 
+	display: block;
+}
+
+div.ps-toolbar-top 
+{
+	border-bottom: 1px solid #42403f;
+	border-top: none;
+}
+
+div.ps-toolbar-close, div.ps-toolbar-previous, div.ps-toolbar-next, div.ps-toolbar-play
+{
+	cursor: pointer;
+	display: table-cell;
+}
+
+div.ps-toolbar div div.ps-toolbar-content
+{
+	width: 44px;
+	height: 44px;
+	margin: 0 auto 0;
+	background-image: url(icons.png);
+	background-repeat: no-repeat;
+}
+
+div.ps-toolbar-close div.ps-toolbar-content
+{
+	background-position: 0 0;
+}
+
+div.ps-toolbar-previous div.ps-toolbar-content
+{
+	background-position: -44px 0;
+}
+
+div.ps-toolbar-previous-disabled div.ps-toolbar-content
+{
+	background-position: -44px -44px;
+}
+
+div.ps-toolbar-next div.ps-toolbar-content
+{
+	background-position: -132px 0;
+}
+
+div.ps-toolbar-next-disabled div.ps-toolbar-content
+{
+	background-position: -132px -44px;
+}
+
+div.ps-toolbar-play div.ps-toolbar-content
+{
+	background-position: -88px 0;
+}
+
+/* Hi-res display */
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+       only screen and (-moz-min-device-pixel-ratio: 1.5),
+       only screen and (min-resolution: 240dpi)
+{
+	div.ps-toolbar div div.ps-toolbar-content
+	{
+		-moz-background-size: 176px 88px;
+		-o-background-size: 176px 88px;
+		-webkit-background-size: 176px 88px;
+		background-size: 176px 88px;
+		background-image: url(icons@2x.png);
+	}
+}
+/* 
+body { padding: 0; margin: 0; background: #DFDCD1; font-family: "Lucida Grande", Helvetica, Arial,Verdana, sans-serif; color: #444340; }
+h1 { font-size: 1.3em; padding: 15px 10px; margin: 0; }
+h2 { font-size: 1.1em; padding: 10px; margin: 0; }
+img { border: none; }
+a { color: #444340; }
+*/
+
+#Header { background: #EEBF02; height: 61px; padding: 0; border-bottom: 1px solid #3c3c3c;  }
+#Header img { display: block; margin: 0 auto 0; }
+
+#MainContent { background: #ffffff; padding-bottom: 30px; }
+
+#Footer { padding: 10px; border-top: none; } 
+
+#SocialLinks { padding: 10px 0 0 0; }
+#SocialLinks:after { clear: both; content: "."; display: block; height: 0; visibility: hidden; }
+#SocialLinks a { display: block; float: left; padding-right: 15px; }
+
+
+/* For inline examples only */
+#PhotoSwipeTarget { width: 100%; height: 200px; }
+
+#Indicators { text-align: center; margin-top: 20px; }
+#Indicators span { display: inline-block; height: 10px; width: 10px; margin: 0 10px 0 0; padding: 0; -webkit-border-radius:5px; -moz-border-radius:5px; -o-border-radius:5px; border-radius:5px; background: #c5c5c5; overflow:hidden; }
+#Indicators span.current{ background: #EEBF02; }
+/* line 7, ../../../../../app/assets/stylesheets/patches/vendor/photoswipe/photoswipe.css.scss */
+div.ps-toolbar div div.ps-toolbar-content {
+  background-image: url("/assets/photoswipe/icons.png");
+}
+
+/* Hi-res display */
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (-moz-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 240dpi) {
+  /* line 17, ../../../../../app/assets/stylesheets/patches/vendor/photoswipe/photoswipe.css.scss */
+  div.ps-toolbar div div.ps-toolbar-content {
+    background-image: url("/assets/photoswipe/icons@2x.png");
+  }
+}
+/* Carousel */
+/* line 24, ../../../../../app/assets/stylesheets/patches/vendor/photoswipe/photoswipe.css.scss */
+div.ps-carousel-item-loading {
+  background: url("/assets/photoswipe/loader.gif") no-repeat center center;
+}
+
+/* line 29, ../../../../../app/assets/stylesheets/patches/vendor/photoswipe/photoswipe.css.scss */
+div.ps-carousel-item-error {
+  background: url("/assets/photoswipe/error.gif") no-repeat center center;
+}
+@import url(project/npb-theme.css);
+/*
+
+
+*/
+/* line 7, ../../app/assets/stylesheets/project/auto_complete.css.scss */
+.auto_complete_page .ui-listview-filter {
+  margin: 0px -15px;
+}
+
+/* line 8, ../../app/assets/stylesheets/project/auto_complete.css.scss */
+.auto_complete_page .ui-content .ui-listview {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+/* line 12, ../../app/assets/stylesheets/project/auto_complete.css.scss */
+.auto_complete_page.search_started .ui-header {
+  display: none;
+}
+/* line 13, ../../app/assets/stylesheets/project/auto_complete.css.scss */
+.auto_complete_page.search_started .ui-footer {
+  display: none;
+}
+/* line 14, ../../app/assets/stylesheets/project/auto_complete.css.scss */
+.auto_complete_page.search_started .ui-content {
+  padding-top: 0px;
+}
+
+/* line 1, ../../app/assets/stylesheets/project/gallery.css.scss */
+.ui-mobile #gallery {
+  -webkit-overflow-scrolling: touch;
+}
+/* line 2, ../../app/assets/stylesheets/project/gallery.css.scss */
+.ui-mobile #gallery .content {
+  background: #111;
+  line-height: 0;
+}
+/* line 3, ../../app/assets/stylesheets/project/gallery.css.scss */
+.ui-mobile #gallery .content img {
+  margin: 3px;
+  border: 1px solid white;
+}
+
+/* line 4, ../../app/assets/stylesheets/project/general.css.scss */
+body {
+  line-height: 1.3;
+}
+
+/* line 5, ../../app/assets/stylesheets/project/general.css.scss */
+h1 {
+  font-size: 32px;
+  margin: .6em 0em .3em;
+}
+
+/* line 6, ../../app/assets/stylesheets/project/general.css.scss */
+h2 {
+  font-size: 18px;
+  margin: .6em 0em .3em;
+}
+
+/* line 7, ../../app/assets/stylesheets/project/general.css.scss */
+h3 {
+  font-size: 18px;
+  margin: .6em 0em .3em;
+}
+
+/* line 9, ../../app/assets/stylesheets/project/general.css.scss */
+p {
+  margin: 0.6em 0em;
+}
+
+/* line 11, ../../app/assets/stylesheets/project/general.css.scss */
+.indent {
+  padding-left: 10%;
+}
+
+/* line 13, ../../app/assets/stylesheets/project/general.css.scss */
+.center {
+  text-align: center;
+}
+
+/* line 15, ../../app/assets/stylesheets/project/general.css.scss */
+.lighter {
+  color: #666;
+}
+
+/* line 17, ../../app/assets/stylesheets/project/general.css.scss */
+input::-webkit-input-placeholder {
+  color: #888;
+}
+
+/* line 21, ../../app/assets/stylesheets/project/general.css.scss */
+input:-moz-placeholder {
+  color: #888;
+}
+
+/* line 6, ../../app/assets/stylesheets/project/landing.css.scss */
+.landing_photo_block {
+  width: 100%;
+  text-shadow: 0 1px 0 #FFFFFF;
+}
+
+/* line 10, ../../app/assets/stylesheets/project/landing.css.scss */
+.app_review h3 {
+  color: #888;
+  font-size: 14px;
+  margin: 0px 0px .25em;
+}
+
+/* line 11, ../../app/assets/stylesheets/project/landing.css.scss */
+.app_review p {
+  color: #666;
+  margin: 0px;
+}
+
+/* line 4, ../../app/assets/stylesheets/project/mobile.css.scss */
+.npb-wrap .ui-li-desc, .npb-wrap .ui-li-heading {
+  overflow: visible;
+  white-space: normal;
+}
+
+/* line 5, ../../app/assets/stylesheets/project/mobile.css.scss */
+.npb-medium .ui-li-desc {
+  font-size: 15px;
+}
+
+/* line 6, ../../app/assets/stylesheets/project/mobile.css.scss */
+.npb-headings h1 {
+  font-size: 32px;
+  margin: .6em 0em .3em;
+}
+
+/* line 7, ../../app/assets/stylesheets/project/mobile.css.scss */
+.npb-headings h2 {
+  font-size: 24px;
+  margin: .6em 0em .3em;
+}
+
+/* line 8, ../../app/assets/stylesheets/project/mobile.css.scss */
+.npb-headings h3 {
+  font-size: 18px;
+  margin: .6em 0em .3em;
+}
+
+/* line 9, ../../app/assets/stylesheets/project/mobile.css.scss */
+.ui-body-c label {
+  color: #666;
+  margin-top: 1.25em;
+  display: block;
+}
+
+/* line 10, ../../app/assets/stylesheets/project/mobile.css.scss */
+.ui-body-a .de-emphasize1 {
+  color: #bbb;
+}
+
+/* line 11, ../../app/assets/stylesheets/project/mobile.css.scss */
+.ui-body-a .de-emphasize2 {
+  color: #999;
+}
+
+/* line 14, ../../app/assets/stylesheets/project/mobile.css.scss */
+.npb-list .ui-li-heading {
+  margin: 0;
+  padding: 0px 0px 10px;
+}
+
+/* line 15, ../../app/assets/stylesheets/project/mobile.css.scss */
+.ui-mobile .npb-list .ui-li-thumb {
+  border: 1px solid white;
+  margin: 3px 3px 5px;
+}
+
+/* line 16, ../../app/assets/stylesheets/project/mobile.css.scss */
+.npb-list .ui-li-has-thumb .ui-btn-inner a.ui-link-inherit, .npb-list .ui-li-static.ui-li-has-thumb {
+  min-height: 62px;
+}
+
+/* line 20, ../../app/assets/stylesheets/project/mobile.css.scss */
+.ui-header .npb-img-button .ui-btn-inner, .ui-footer .npb-img-button .ui-btn-inner {
+  padding: 3px 15px 0px;
+}
+
+/* line 24, ../../app/assets/stylesheets/project/mobile.css.scss */
+.ui-header .npb-sub-heading {
+  margin: 0;
+  font-size: 10px;
+  font-weight: normal;
+}
+
+/* line 25, ../../app/assets/stylesheets/project/mobile.css.scss */
+.ui-header .ui-title.npb-has-subheading {
+  margin: 5px 0px;
+}
+
+/* line 30, ../../app/assets/stylesheets/project/mobile.css.scss */
+#splash {
+  border: none;
+  color: #e6e6e6;
+  text-shadow: 0 0px 0 #2e3192;
+  background: #2e3192;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#232570), to(#383cb3));
+  /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(#232570, #383cb3);
+  /* Chrome 10+, Saf5.1+ */
+  background-image: -moz-linear-gradient(#232570, #383cb3);
+  /* FF3.6 */
+  background-image: -ms-linear-gradient(#232570, #383cb3);
+  /* IE10 */
+  background-image: -o-linear-gradient(#232570, #383cb3);
+  /* Opera 11.10+ */
+  background-image: linear-gradient(#232570, #383cb3);
+}
+
+/* line 46, ../../app/assets/stylesheets/project/mobile.css.scss */
+.button_box {
+  padding-top: 15px;
+}
+
+/* line 8, ../../app/assets/stylesheets/project/photo.css.scss */
+.thumbnail {
+  padding: 5px;
+}
+/* line 10, ../../app/assets/stylesheets/project/photo.css.scss */
+.thumbnail img {
+  border: 1px solid #555555;
+  width: 100%;
+  padding: 0px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
