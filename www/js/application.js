@@ -26466,6 +26466,14 @@ var Uri = function (uriString) {
 /* add compatibility for users of jsUri <= 1.1.1 */
 var jsUri = Uri;
 (function() {
+
+  $("#admin").live("pagebeforeshow", function() {
+    $("#admin .client").html(typeof app !== "undefined" && app !== null ? "Packaged App" : "Browser");
+    return $("#admin .client").css("color", typeof app !== "undefined" && app !== null ? "red" : "blue");
+  });
+
+}).call(this);
+(function() {
   var AutoCompleteDisplay,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 

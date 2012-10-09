@@ -2534,6 +2534,40 @@ a { color: #444340; }
 #Indicators { text-align: center; margin-top: 20px; }
 #Indicators span { display: inline-block; height: 10px; width: 10px; margin: 0 10px 0 0; padding: 0; -webkit-border-radius:5px; -moz-border-radius:5px; -o-border-radius:5px; border-radius:5px; background: #c5c5c5; overflow:hidden; }
 #Indicators span.current{ background: #EEBF02; }
+/* line 5, ../../../../../app/assets/stylesheets/patches/vendor/jquery_mobile/jquery_mobile_icons.css.scss */
+.ui-icon-loading {
+  background-image: url(/assets/jquery_mobile/ajax-loader.gif);
+}
+
+/* line 8, ../../../../../app/assets/stylesheets/patches/vendor/jquery_mobile/jquery_mobile_icons.css.scss */
+.ui-icon-alt {
+  background-image: url(/assets/jquery_mobile/icons-18-black.png);
+}
+
+/* line 12, ../../../../../app/assets/stylesheets/patches/vendor/jquery_mobile/jquery_mobile_icons.css.scss */
+.ui-icon, .ui-icon-searchfield:after {
+  background-image: url(/assets/jquery_mobile/icons-18-white.png);
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min--moz-device-pixel-ratio: 1.5), only screen and (min-resolution: 240dpi) {
+  /* line 24, ../../../../../app/assets/stylesheets/patches/vendor/jquery_mobile/jquery_mobile_icons.css.scss */
+  .ui-icon-plus, .ui-icon-minus, .ui-icon-delete, .ui-icon-arrow-r,
+  .ui-icon-arrow-l, .ui-icon-arrow-u, .ui-icon-arrow-d, .ui-icon-check,
+  .ui-icon-gear, .ui-icon-refresh, .ui-icon-forward, .ui-icon-back,
+  .ui-icon-grid, .ui-icon-star, .ui-icon-alert, .ui-icon-info, .ui-icon-home, .ui-icon-search, .ui-icon-searchfield:after,
+  .ui-icon-checkbox-off, .ui-icon-checkbox-on, .ui-icon-radio-off, .ui-icon-radio-on {
+    background-image: url(/assets/jquery_mobile/icons-36-white.png);
+    -moz-background-size: 776px 18px;
+    -o-background-size: 776px 18px;
+    -webkit-background-size: 776px 18px;
+    background-size: 776px 18px;
+  }
+
+  /* line 31, ../../../../../app/assets/stylesheets/patches/vendor/jquery_mobile/jquery_mobile_icons.css.scss */
+  .ui-icon-alt {
+    background-image: url(/assets/jquery_mobile/icons-36-black.png);
+  }
+}
 /* line 7, ../../../../../app/assets/stylesheets/patches/vendor/photoswipe/photoswipe.css.scss */
 div.ps-toolbar div div.ps-toolbar-content {
   background-image: url("/assets/photoswipe/icons.png");
