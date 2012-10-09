@@ -68,6 +68,9 @@ has-props
 photoswipe
 dir
 
+phonegap
+dir
+
 blue_star.png
 file
 
