@@ -31,23 +31,17 @@
 
   <div data-role="content" >
     <h3>Client: <span class="client"></span></h3>
-    <img src="/assets/jquery_mobile/ajax-loader.gif"/>
-    <div class="ui-icon-loading" style="height:50px"></div>
     
     <h3>Server</h3>
+    <p><strong>Http_x_forwarded_host:</strong> None</p>
+    <p><strong>Host:</strong> localhost:3000</p>
     
-    <label for="server_select" class="server_select">Shipping method:</label>
-    <select name="server_select" id="server_select" data-mini="true">
-       <option value="standard">Localhost</option>
-       <option value="standard">LivingPic.com</option>
-       <option value="standard">Sani Tunnel :9150</option>
-       <option value="standard">Farhad Tunnel :9160</option>
-       <option value="standard">Sani local</option>
-       <option value="standard">LivingPic.com</option>
-       <option value="standard">LivingPic.com</option>
-       <option value="standard">LivingPic.com</option>
-       <option value="standard">LivingPic.com</option>
-    </select>
+    <div data-role="fieldcontain">
+      <label for="server_select" class="server_select">Change server</label>
+      <select name="server_select" id="server_select" data-mini="true">
+         <option value="standard">Localhost</option>
+      </select>
+    </div>
     
   </div>
 

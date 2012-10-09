@@ -26466,11 +26466,47 @@ var Uri = function (uriString) {
 /* add compatibility for users of jsUri <= 1.1.1 */
 var jsUri = Uri;
 (function() {
+  var _this = this;
 
   $("#admin").live("pagebeforeshow", function() {
     $("#admin .client").html(typeof app !== "undefined" && app !== null ? "Packaged App" : "Browser");
-    return $("#admin .client").css("color", typeof app !== "undefined" && app !== null ? "red" : "blue");
+    $("#admin .client").css("color", typeof app !== "undefined" && app !== null ? "red" : "blue");
+    Admin.get_hosts();
+    console.log(Admin.hosts);
+    return console.log(Admin.hosts_index);
   });
+
+  this.Admin = {
+    hosts: null,
+    hosts_index: null,
+    get_hosts: function() {
+      return $.ajax({
+        async: false,
+        url: Config.base_url() + "/app/hosts",
+        success: function(response) {
+          Admin.hosts = response.hosts;
+          return Admin.hosts_index = response.hosts_index;
+        }
+      });
+    },
+    populate_hosts_selector: function() {
+      var host, sel_opts, _i, _len, _ref, _results;
+      sel_opts = [];
+      _ref = Admin.hosts;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        host = _ref[_i];
+        _results.push((function() {
+          var opt;
+          opt = $("<option></option>");
+          opt.attr("value", host.uri);
+          opt.html(host.name);
+          return sel_opts.push(opt);
+        })());
+      }
+      return _results;
+    }
+  };
 
 }).call(this);
 (function() {
