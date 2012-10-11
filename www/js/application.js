@@ -26466,47 +26466,200 @@ var Uri = function (uriString) {
 /* add compatibility for users of jsUri <= 1.1.1 */
 var jsUri = Uri;
 (function() {
-  var _this = this;
+  var HostHandler,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  $("#admin").live("pagebeforeshow", function() {
+  $("#admin").live("pageshow", function() {
     $("#admin .client").html(typeof app !== "undefined" && app !== null ? "Packaged App" : "Browser");
     $("#admin .client").css("color", typeof app !== "undefined" && app !== null ? "red" : "blue");
-    Admin.get_hosts();
-    console.log(Admin.hosts);
-    return console.log(Admin.hosts_index);
+    if (!window.host_handler) {
+      return window.host_handler = new HostHandler;
+    }
   });
 
-  this.Admin = {
-    hosts: null,
-    hosts_index: null,
-    get_hosts: function() {
-      return $.ajax({
-        async: false,
-        url: Config.base_url() + "/app/hosts",
-        success: function(response) {
-          Admin.hosts = response.hosts;
-          return Admin.hosts_index = response.hosts_index;
-        }
-      });
-    },
-    populate_hosts_selector: function() {
-      var host, sel_opts, _i, _len, _ref, _results;
-      sel_opts = [];
-      _ref = Admin.hosts;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        host = _ref[_i];
-        _results.push((function() {
-          var opt;
-          opt = $("<option></option>");
-          opt.attr("value", host.uri);
-          opt.html(host.name);
-          return sel_opts.push(opt);
-        })());
+  HostHandler = (function() {
+
+    HostHandler.HOSTS = [
+      {
+        name: "None",
+        uri: ""
+      }, {
+        name: "Localhost",
+        uri: "127.0.0.1:3000"
+      }, {
+        name: "LivingPic.com",
+        uri: "www.livingpic.com"
+      }, {
+        name: "Sani Home",
+        uri: "192.168.1.72:3000"
+      }, {
+        name: "Sani Boat",
+        uri: "192.168.1.65:3000"
+      }, {
+        name: "Farhad Boat",
+        uri: "192.168.1.69:3000"
+      }, {
+        name: "Farhad Home",
+        uri: "10.0.1.18:3000"
+      }, {
+        name: "Tunnel Sani :9150",
+        uri: "www.trymyui.com:9150"
+      }, {
+        name: "Tunnel Farhad :9160",
+        uri: "www.trymyui.com:9160"
       }
-      return _results;
+    ];
+
+    HostHandler.HOSTS_INDEX = {};
+
+    function HostHandler() {
+      this.update_selected_host_html = __bind(this.update_selected_host_html, this);
+
+      this.populate_hosts_selector = __bind(this.populate_hosts_selector, this);
+
+      this.host_uri = __bind(this.host_uri, this);
+
+      this.host_name = __bind(this.host_name, this);
+
+      this.host_info = __bind(this.host_info, this);
+
+      this.index_for_host = __bind(this.index_for_host, this);
+
+      this.handle_connection_error = __bind(this.handle_connection_error, this);
+
+      this.handle_connection_ok = __bind(this.handle_connection_ok, this);
+
+      this.check_host = __bind(this.check_host, this);
+
+      this.on_host_selector_change = __bind(this.on_host_selector_change, this);
+
+      this.determine_selected_host_first_time = __bind(this.determine_selected_host_first_time, this);
+
+      var h, i, _fn, _i, _len, _ref,
+        _this = this;
+      _ref = HostHandler.HOSTS;
+      _fn = function() {
+        return HostHandler.HOSTS_INDEX[h.uri] = i;
+      };
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        h = _ref[i];
+        _fn();
+      }
+      this.populate_hosts_selector();
+      $("#host_select").bind("change", this.on_host_selector_change);
+      this.selected_host = null;
+      this.determine_selected_host_first_time();
+      this.update_selected_host_html();
     }
-  };
+
+    HostHandler.prototype.determine_selected_host_first_time = function() {
+      if (Config.is_running_in_browser()) {
+        return this.check_host();
+      } else {
+        return this.selected_host = localStorage["host"];
+      }
+    };
+
+    HostHandler.prototype.on_host_selector_change = function() {
+      this.selected_host = $("#host_select")[0].selectedIndex;
+      console.log(this.selected_host);
+      this.update_selected_host_html();
+      return this.check_host();
+    };
+
+    HostHandler.prototype.check_host = function() {
+      var base_url,
+        _this = this;
+      $.mobile.allowCrossDomainPages = true;
+      $.support.cors = true;
+      base_url = this.selected_host != null ? "http://" + (this.host_uri(this.selected_host)) : "";
+      if (Config.is_running_in_browser() || (this.selected_host != null)) {
+        return $.ajax({
+          async: false,
+          url: base_url + "/app/host",
+          success: function(data, textStatus, jqXHR) {
+            var host;
+            host = data.host;
+            _this.selected_host = _this.index_for_host(host);
+            if (_this.selected_host == null) {
+              alert("You are trying to access host: " + host + ". It isn't in the list of named hosts. Please update @HOSTS in the HostHander.");
+            }
+            _this.handle_connection_ok();
+            if (_this.selected_host != null) {
+              return _this.update_selected_host_html();
+            }
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            return _this.handle_connection_error(base_url, textStatus, errorThrown);
+          }
+        });
+      } else {
+        return false;
+      }
+    };
+
+    HostHandler.prototype.handle_connection_ok = function() {
+      $("#admin .host_status").html("200 OK");
+      return $("#admin .host_status").css("color", "green");
+    };
+
+    HostHandler.prototype.handle_connection_error = function(url, status, errorThrown) {
+      var err_msg;
+      err_msg = "Server Error: " + url + " -> " + status + ": " + errorThrown;
+      $("#admin .host_status").html(err_msg);
+      $("#admin .host_status").css("color", "red");
+      return alert(err_msg);
+    };
+
+    HostHandler.prototype.index_for_host = function(host) {
+      return HostHandler.HOSTS_INDEX[host];
+    };
+
+    HostHandler.prototype.host_info = function(index) {
+      return HostHandler.HOSTS[index];
+    };
+
+    HostHandler.prototype.host_name = function(index) {
+      return this.host_info(index).name;
+    };
+
+    HostHandler.prototype.host_uri = function(index) {
+      return this.host_info(index).uri;
+    };
+
+    HostHandler.prototype.populate_hosts_selector = function() {
+      var host, i, sel_opts, _fn, _i, _len, _ref;
+      sel_opts = [];
+      _ref = HostHandler.HOSTS;
+      _fn = function() {
+        var opt;
+        opt = $("<option></option>");
+        opt.attr("value", i);
+        opt.html(host.name);
+        return sel_opts.push(opt);
+      };
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        host = _ref[i];
+        _fn();
+      }
+      return $("#host_select").html(sel_opts);
+    };
+
+    HostHandler.prototype.update_selected_host_html = function() {
+      $("#host_select option").removeAttr("selected");
+      if (this.selected_host != null) {
+        $("#admin .current_host").html("" + (this.host_name(this.selected_host)) + " - " + (this.host_uri(this.selected_host)));
+        $("#host_select option").eq(this.selected_host).attr("selected", true);
+      } else {
+        $("#admin .current_host").html("None - please select a host");
+      }
+      $("#host_select").selectmenu('refresh', true);
+      return $("#host_select option").removeAttr("selected");
+    };
+
+    return HostHandler;
+
+  })();
 
 }).call(this);
 (function() {
@@ -27822,6 +27975,9 @@ var jsUri = Uri;
   this.Config = {
     is_running_on_device: function() {
       return typeof app !== "undefined" && app !== null;
+    },
+    is_running_in_browser: function() {
+      return !(typeof app !== "undefined" && app !== null);
     },
     get_contacts: function() {
       if (typeof app !== "undefined" && app !== null) {

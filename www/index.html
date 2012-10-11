@@ -14,7 +14,7 @@
     <script type="text/javascript" charset="utf-8">
   $(document).ready( function () {
     // Config.init_app()
-    $.mobile.changePage("#admin")
+    // $.mobile.changePage("#admin")
   })
   
   function init_app() {
@@ -30,18 +30,23 @@
 
 
   <div data-role="content" >
-    <h3>Client: <span class="client"></span></h3>
+    <h3>Client</h3>
+    <span class="client small"></span>
     
     <h3>Server</h3>
-    <p><strong>Http_x_forwarded_host:</strong> None</p>
-    <p><strong>Host:</strong> localhost:3000</p>
+    <p class="small">
+      <strong>Host:</strong> &nbsp; <span class="current_host"></span><br/> 
+      <strong>Http_x_forwarded_host:</strong> &nbsp; <span class="current_forwarded_host"></span><br/>
+      <strong>Status: <span class="host_status"></span></strong>
+    </p>
+    
     
     <div data-role="fieldcontain">
-      <label for="server_select" class="server_select">Change server</label>
-      <select name="server_select" id="server_select" data-mini="true">
-         <option value="standard">Localhost</option>
-      </select>
+       <label for="host_select" class="select">Change Server:</label>
+       <select name="host_select" id="host_select" data-mini="true">
+       </select>
     </div>
+        
     
   </div>
 

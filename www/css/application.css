@@ -2687,6 +2687,16 @@ input:-moz-placeholder {
   color: #888;
 }
 
+/* line 25, ../../app/assets/stylesheets/project/general.css.scss */
+.small {
+  font-size: 10px;
+}
+
+/* line 26, ../../app/assets/stylesheets/project/general.css.scss */
+.medium {
+  font-size: 12px;
+}
+
 /* line 6, ../../app/assets/stylesheets/project/landing.css.scss */
 .landing_photo_block {
   width: 100%;
