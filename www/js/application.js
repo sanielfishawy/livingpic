@@ -26548,8 +26548,6 @@ var jsUri = Uri;
       this.populate_hosts_selector();
       $("#host_select").bind("change", this.on_host_selector_change);
       this.selected_host = null;
-      this.determine_selected_host_first_time();
-      this.update_selected_host_html();
     }
 
     HostHandler.prototype.determine_selected_host_first_time = function() {
