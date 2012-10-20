@@ -2,7 +2,7 @@
 // at that point it points to the event and not to this object that we define
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 var running_on_device = true;
-
+alert ("Before define app")
 var window.app = {
     location: null,
     contacts: null,
