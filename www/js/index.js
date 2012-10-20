@@ -25,7 +25,8 @@ var window.app = {
     deviceready: function() {
         // Was for testing only - no longer necessary
         // this.report('deviceready');
-
+        alert("In app.deviceready()")
+        
         console.log("device is ready");
         this.getContacts();
         app.bindButtons();
