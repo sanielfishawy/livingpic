@@ -2,7 +2,7 @@
 // at that point it points to the event and not to this object that we define
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 var running_on_device = true;
-alert ("Before define app")
+alert("Before define app")
 var window.app = {
     location: null,
     contacts: null,
@@ -15,6 +15,8 @@ var window.app = {
        // document.addEventListener('deviceready', touchapp.mainLaunch, false);
        this.deviceready = __bind(this.deviceready,this)
        document.addEventListener('deviceready', this.deviceready, false);
+       
+       alert("In initialize app")
        
        // Uncomment this to simulate in Firefox or otherwise
       this.deviceready()
