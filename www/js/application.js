@@ -27978,6 +27978,8 @@ var jsUri = Uri;
 }).call(this);
 (function() {
 
+  alert("before config");
+
   this.Config = {
     is_running_on_device: function() {
       return typeof app !== "undefined" && app !== null;
