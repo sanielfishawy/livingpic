@@ -27136,7 +27136,6 @@ var jsUri = Uri;
       alert("Please enter a name");
       return;
     }
-    alert("fuck");
     clear_current_occasion();
     set_current_occasion({
       name: o_name.name
@@ -27147,7 +27146,11 @@ var jsUri = Uri;
     return $.ajax({
       url: Config.base_url() + "/occasions/create",
       type: "POST",
-      data: current_occasion(),
+      data: {
+        name: o_name.name,
+        latitude: Config.location().latitude,
+        longitude: Config.location().longitude
+      },
       success: function(response) {
         return set_current_occasion(JSON.parse(response.responseText));
       }
@@ -27168,7 +27171,7 @@ var jsUri = Uri;
         async: false,
         url: Config.base_url() + "/app/get_contacts",
         success: function(response) {
-          set_contact_list(JSON.parse(response.responseText));
+          set_contact_list(JSON.parse(response));
           return create_indexed_contact_list();
         }
       });
@@ -27207,7 +27210,10 @@ var jsUri = Uri;
       return $.ajax({
         url: Config.base_url() + "/occasions/pop_estimate",
         type: "POST",
-        data: current_occasion()
+        data: {
+          id: current_occasion().id,
+          estimate: pop_estimate
+        }
       });
     } else {
       return alert("Please enter a number.");
@@ -27612,7 +27618,8 @@ var jsUri = Uri;
       type: "POST",
       data: {
         device: Config.device,
-        invitees: JSON.stringify(find_contacts_by_id(invitees()))
+        invitees: JSON.stringify(find_contacts_by_id(invitees())),
+        occasion_id: current_occasion().id
       }
     });
     return $.mobile.changePage("#confirm_invite", {
@@ -27950,6 +27957,7 @@ var jsUri = Uri;
       url: Config.base_url() + "/social_actions/tag",
       type: "POST",
       data: {
+        photo_id: 1,
         tags: JSON.stringify(find_contacts_by_id(keys(ac.picked_items())))
       }
     });
@@ -27995,7 +28003,7 @@ var jsUri = Uri;
       if (using_app != null) {
         return "snapshot://";
       } else {
-        return "/";
+        return "/app";
       }
     },
     check_cookies_query_string: function() {
@@ -28013,9 +28021,24 @@ var jsUri = Uri;
       }
     },
     device: function() {
-      return typeof app === "function" ? app({
-        "iphone": ''
-      }) : void 0;
+      if (typeof app !== "undefined" && app !== null) {
+        return "iphone";
+      } else {
+        return '';
+      }
+    },
+    location: function() {
+      if ((typeof app !== "undefined" && app !== null) && app.location) {
+        return {
+          latitude: app.location.coords.latitude,
+          longitude: app.location.coords.latitude
+        };
+      } else {
+        return {
+          latitude: 31 + 5 * Math.random(),
+          longitude: -120 + 40 * Math.random()
+        };
+      }
     }
   };
 

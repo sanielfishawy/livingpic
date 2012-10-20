@@ -6,9 +6,9 @@ var running_on_device = true;
 var app = {
     location: null,
     contacts: null,
-    // base_url: "http://192.168.1.69:3000",
+    base_url: "http://192.168.1.69:3000",
     // For my home system
-    base_url: "http://10.0.1.18:3000",
+    // base_url: "http://10.0.1.18:3000",
     
     initialize: function() {
        // This one for Sensa Touch - app is defined in app.js
@@ -40,6 +40,7 @@ var app = {
         $('#' + id + ' .pending').hide();
         $('#' + id + ' .complete').show();
     },
+    
     // Initialize the application - this is the stuff that comes from our server code 
     // Keep it here for now for encapsulation
     initUserState: function() {
@@ -132,8 +133,8 @@ var app = {
         options.mimeType="image/jpeg";
 
         var params = new Object();
-        params.latitude = app.position.coords.latitude;
-        params.longitude = app.position.coords.longitude;
+        params.latitude = app.location.coords.latitude;
+        params.longitude = app.location.coords.longitude;
 
         options.params = params;
 
