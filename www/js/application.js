@@ -27847,11 +27847,11 @@ var jsUri = Uri;
 
   alert("in phonegap");
 
-  document.addEventListener("deviceready", onDeviceReady, false);
-
   window.onDeviceReady = function() {
     return alert("Phongap is ready");
   };
+
+  document.addEventListener("deviceready", onDeviceReady, false);
 
 }).call(this);
 (function() {
