@@ -27843,20 +27843,20 @@ var jsUri = Uri;
   })();
 
 }).call(this);
-var app = {
-    initialize: function() {
-        alert("phonegap called initialize")
-        this.bind();
-    },
-    bind: function() {
-        document.addEventListener('deviceready', this.deviceready, false);
-    },
-    deviceready: function() {
-        // This is an event handler function, which means the scope is the event.
-        // So, we must explicitly called `app.report()` instead of `this.report()`.
-        alert("phonegap is ready");
-    }
-};
+// var app = {
+//     initialize: function() {
+//         alert("phonegap called initialize")
+//         this.bind();
+//     },
+//     bind: function() {
+//         document.addEventListener('deviceready', this.deviceready, false);
+//     },
+//     deviceready: function() {
+//         // This is an event handler function, which means the scope is the event.
+//         // So, we must explicitly called `app.report()` instead of `this.report()`.
+//         alert("phonegap is ready");
+//     }
+// };
 (function() {
 
   window.handle_registration = function(opt) {
