@@ -3,7 +3,7 @@
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 var running_on_device = true;
 alert("Before define app")
-var window.app = {
+var app = {
     location: null,
     contacts: null,
     base_url: "http://192.168.1.69:3000",
