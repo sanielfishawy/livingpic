@@ -27845,6 +27845,8 @@ var jsUri = Uri;
 }).call(this);
 (function() {
 
+  alert("in phonegap");
+
   document.addEventListener("deviceready", onDeviceReady, false);
 
   window.onDeviceReady(function() {
