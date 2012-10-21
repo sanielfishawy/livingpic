@@ -27849,9 +27849,9 @@ var jsUri = Uri;
 
   document.addEventListener("deviceready", onDeviceReady, false);
 
-  window.onDeviceReady(function() {
+  window.onDeviceReady = function() {
     return alert("Phongap is ready");
-  });
+  };
 
 }).call(this);
 (function() {
