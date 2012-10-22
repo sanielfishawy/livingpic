@@ -26577,6 +26577,10 @@ var jsUri = Uri;
           url: base_url + "/app/host",
           success: function(data, textStatus, jqXHR) {
             var host;
+            console.log("success");
+            console.log(data);
+            console.log(textStatus);
+            console.log(jqXHR);
             host = data.host;
             _this.selected_host = _this.index_for_host(host);
             if (_this.selected_host == null) {
@@ -26588,6 +26592,9 @@ var jsUri = Uri;
             }
           },
           error: function(jqXHR, textStatus, errorThrown) {
+            console.log("error");
+            console.log(textStatus);
+            console.log(errorThrown);
             return _this.handle_connection_error(base_url, textStatus, errorThrown);
           }
         });
@@ -27062,11 +27069,8 @@ var jsUri = Uri;
 }).call(this);
 (function() {
 
-  $(window).bind("load", function() {
-    alert("window loaded");
-    alert(Config.is_running_on_device());
+  $(document).ready("load", function() {
     if (Config.is_running_on_device()) {
-      alert("running on device setting up device ready handler.");
       return $(document).bind("deviceready", function() {
         return alert("deviceready");
       });
@@ -27074,6 +27078,8 @@ var jsUri = Uri;
       return alert("Running on browser.");
     }
   });
+
+  this.Boot = {};
 
 }).call(this);
 (function() {
