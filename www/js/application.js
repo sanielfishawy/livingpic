@@ -26494,7 +26494,7 @@ var jsUri = Uri;
         uri: "192.168.1.72:3000"
       }, {
         name: "Sani Boat",
-        uri: "192.168.1.65:3000"
+        uri: "192.168.1.72:3000"
       }, {
         name: "Farhad Boat",
         uri: "192.168.1.69:3000"
@@ -26548,6 +26548,8 @@ var jsUri = Uri;
       this.populate_hosts_selector();
       $("#host_select").bind("change", this.on_host_selector_change);
       this.selected_host = null;
+      this.determine_selected_host_first_time();
+      this.update_selected_host_html();
     }
 
     HostHandler.prototype.determine_selected_host_first_time = function() {
@@ -26577,10 +26579,6 @@ var jsUri = Uri;
           url: base_url + "/app/host",
           success: function(data, textStatus, jqXHR) {
             var host;
-            console.log("success");
-            console.log(data);
-            console.log(textStatus);
-            console.log(jqXHR);
             host = data.host;
             _this.selected_host = _this.index_for_host(host);
             if (_this.selected_host == null) {
@@ -26592,9 +26590,6 @@ var jsUri = Uri;
             }
           },
           error: function(jqXHR, textStatus, errorThrown) {
-            console.log("error");
-            console.log(textStatus);
-            console.log(errorThrown);
             return _this.handle_connection_error(base_url, textStatus, errorThrown);
           }
         });
@@ -26640,7 +26635,7 @@ var jsUri = Uri;
         var opt;
         opt = $("<option></option>");
         opt.attr("value", i);
-        opt.html(host.name);
+        opt.html(host.name + " | " + host.uri);
         return sel_opts.push(opt);
       };
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
@@ -26651,6 +26646,9 @@ var jsUri = Uri;
     };
 
     HostHandler.prototype.update_selected_host_html = function() {
+      if (Config.is_running_in_browser()) {
+        $("#host_selector_block").hide();
+      }
       $("#host_select option").removeAttr("selected");
       if (this.selected_host != null) {
         $("#admin .current_host").html("" + (this.host_name(this.selected_host)) + " - " + (this.host_uri(this.selected_host)));
@@ -27069,17 +27067,21 @@ var jsUri = Uri;
 }).call(this);
 (function() {
 
-  $(document).ready("load", function() {
+  $(document).ready(function() {
     if (Config.is_running_on_device()) {
       return $(document).bind("deviceready", function() {
-        return alert("deviceready");
+        return Boot.initialize();
       });
     } else {
-      return alert("Running on browser.");
+      return Boot.initialize();
     }
   });
 
-  this.Boot = {};
+  this.Boot = {
+    initialize: function() {
+      return $.mobile.changePage("#admin");
+    }
+  };
 
 }).call(this);
 (function() {
