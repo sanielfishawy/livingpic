@@ -27624,6 +27624,7 @@ var app = {
         // Was for testing only - no longer necessary
         // this.report('deviceready');
         alert("device ready")
+        return
         console.log("device is ready");
         this.getContacts();
         app.bindButtons();
