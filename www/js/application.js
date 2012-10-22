@@ -27602,6 +27602,7 @@ var jsUri = Uri;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 var running_on_device = true;
 
+alert("in index.js")
 var app = {
     location: null,
     contacts: null,
