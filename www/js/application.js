@@ -27064,6 +27064,7 @@ var jsUri = Uri;
 
   $(document).ready(function() {
     alert("document ready");
+    alert(Config.is_running_on_device());
     if (Config.is_running_on_device()) {
       alert("running on device setting up device ready handler.");
       return $(document).bind("deviceready", function() {
