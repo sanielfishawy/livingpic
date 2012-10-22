@@ -27602,7 +27602,6 @@ var jsUri = Uri;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 var running_on_device = true;
 
-alert("in index.js")
 var app = {
     location: null,
     contacts: null,
@@ -27623,7 +27622,7 @@ var app = {
     deviceready: function() {
         // Was for testing only - no longer necessary
         // this.report('deviceready');
-
+        alert("device ready")
         console.log("device is ready");
         this.getContacts();
         app.bindButtons();
