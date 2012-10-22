@@ -27062,6 +27062,21 @@ var jsUri = Uri;
 }).call(this);
 (function() {
 
+  $(document).ready(function() {
+    alert("document ready");
+    if (Config.is_running_on_device()) {
+      alert("running on device setting up device ready handler.");
+      return $(document).bind("deviceready", function() {
+        return alert("deviceready");
+      });
+    } else {
+      return alert("Running on browser.");
+    }
+  });
+
+}).call(this);
+(function() {
+
   $(document).ready(function() {});
 
 }).call(this);
@@ -28256,10 +28271,10 @@ getUrlParam = function(url,name) {
 
   this.Config = {
     is_running_on_device: function() {
-      return typeof app !== "undefined" && app !== null;
+      return typeof Cordova !== "undefined" && Cordova !== null;
     },
     is_running_in_browser: function() {
-      return !(typeof app !== "undefined" && app !== null);
+      return !is_running_on_device();
     },
     get_contacts: function() {
       if (typeof app !== "undefined" && app !== null) {
