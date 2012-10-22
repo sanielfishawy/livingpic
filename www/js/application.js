@@ -28271,7 +28271,7 @@ getUrlParam = function(url,name) {
 
   this.Config = {
     is_running_on_device: function() {
-      return typeof Cordova !== "undefined" && Cordova !== null;
+      return typeof PACKAGED_FOR_DEVICE !== "undefined" && PACKAGED_FOR_DEVICE !== null;
     },
     is_running_in_browser: function() {
       return !is_running_on_device();
