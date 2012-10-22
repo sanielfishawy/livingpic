@@ -28280,7 +28280,7 @@ getUrlParam = function(url,name) {
       return typeof PACKAGED_FOR_DEVICE !== "undefined" && PACKAGED_FOR_DEVICE !== null;
     },
     is_running_in_browser: function() {
-      return !is_running_on_device();
+      return !Config.is_running_on_device();
     },
     get_contacts: function() {
       if (typeof app !== "undefined" && app !== null) {
