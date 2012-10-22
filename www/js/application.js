@@ -27610,13 +27610,14 @@ var app = {
     // base_url: "http://10.0.1.18:3000",
     
     initialize: function() {
-       // This one for Sensa Touch - app is defined in app.js
-       // document.addEventListener('deviceready', touchapp.mainLaunch, false);
-       this.deviceready = __bind(this.deviceready,this)
-       document.addEventListener('deviceready', this.deviceready, false);
-       
-       // Uncomment this to simulate in Firefox or otherwise
-      this.deviceready()
+      alert("in app.initialize()")
+      // This one for Sensa Touch - app is defined in app.js
+      // document.addEventListener('deviceready', touchapp.mainLaunch, false);
+      this.deviceready = __bind(this.deviceready,this)
+      document.addEventListener('deviceready', this.deviceready, false);
+
+      // Uncomment this to simulate in browser
+      // this.deviceready()
     },
     
     deviceready: function() {
