@@ -27019,12 +27019,13 @@ var jsUri = Uri;
     };
 
     Contacts.get_list_from_device = function(callback) {
-      return navigator.contacts.find(["displayName", "name"], Contacts.get_list_success(callback), Contacts.get_list_error, {
+      Contacts.device_call_back = callback;
+      return navigator.contacts.find(["displayName", "name"], Contacts.get_list_success, Contacts.get_list_error, {
         multiple: true
       });
     };
 
-    Contacts.get_list_success = function(contacts, callback) {
+    Contacts.get_list_success = function(contacts) {
       console.log("Successfully found " + contacts.length + " contacts");
       Contacts.contacts = contacts.filter(function(c) {
         return c.displayName != null;
@@ -27036,7 +27037,7 @@ var jsUri = Uri;
           str: c.displayName
         };
       });
-      return callback(Contacts.contacts);
+      return Contacts.device_call_back(Contacts.contacts);
     };
 
     Contacts.get_list_error = function(error) {
