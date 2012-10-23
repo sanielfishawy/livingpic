@@ -26994,16 +26994,10 @@ var jsUri = Uri;
 
 }).call(this);
 (function() {
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   window.ContactsHandler = (function() {
 
-    function ContactsHandler() {
-      this.get_list_error = __bind(this.get_list_error, this);
-
-      this.get_list_success = __bind(this.get_list_success, this);
-
-    }
+    function ContactsHandler() {}
 
     ContactsHandler.indexed_contacts = null;
 
@@ -27013,11 +27007,11 @@ var jsUri = Uri;
       });
     };
 
-    ContactsHandler.prototype.get_list_success = function(contacts) {
+    ContactsHandler.get_list_success = function(contacts) {
       return alert("Successfully found " + contacts.length + " contacts");
     };
 
-    ContactsHandler.prototype.get_list_error = function(error) {
+    ContactsHandler.get_list_error = function(error) {
       alert("Error loading contacts");
       return console.log(error);
     };
