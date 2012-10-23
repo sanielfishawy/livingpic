@@ -27029,9 +27029,11 @@ var jsUri = Uri;
       Contacts.contacts = contacts.map(function(contact) {
         return {
           id: contact.id,
-          name: contact.displayName
+          str: contact.displayName
         };
       });
+      console.log(Contacts.contacts.length);
+      console.log(Contacts.contacts[1000]);
       return callback(Contacts.contacts);
     };
 
