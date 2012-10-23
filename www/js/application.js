@@ -27001,6 +27001,8 @@ var jsUri = Uri;
 
     ContactsHandler.indexed_contacts = null;
 
+    ContactsHandler.contacts = null;
+
     ContactsHandler.get_list_from_device = function() {
       return navigator.contacts.find(["displayName", "name"], ContactsHandler.get_list_success, ContactsHandler.get_list_error, {
         multiple: true
@@ -27008,7 +27010,8 @@ var jsUri = Uri;
     };
 
     ContactsHandler.get_list_success = function(contacts) {
-      return alert("Successfully found " + contacts.length + " contacts");
+      alert("Successfully found " + contacts.length + " contacts");
+      return ContactsHandler.contacts = contacts;
     };
 
     ContactsHandler.get_list_error = function(error) {
@@ -27554,7 +27557,8 @@ var jsUri = Uri;
       if (Config.is_running_in_browser()) {
         return this.check_host();
       } else {
-        return this.selected_host = localStorage.host;
+        this.selected_host = localStorage.host;
+        return this.check_host();
       }
     };
 
