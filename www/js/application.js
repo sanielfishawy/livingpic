@@ -27524,13 +27524,11 @@ var jsUri = Uri;
 
     HostHandler.INSTANCE = null;
 
-    HostHandler.selected_host = null;
-
     HostHandler.base_url = function() {
       if (Config.is_running_in_browser()) {
         return "";
-      } else if (HostHandler.selected_host != null) {
-        return "http://" + HostHandler.host_uri(HostHandler.selected_host);
+      } else if (HostHandler.INSTANCE.selected_host != null) {
+        return "http://" + HostHandler.INSTANCE.host_uri(HostHandler.INSTANCE.selected_host);
       } else {
         alert("No host selected. Please select a host");
         $.mobile.changePage("#admin");
