@@ -26890,6 +26890,7 @@ var jsUri = Uri;
 
   this.Boot = {
     initialize: function() {
+      new HostHandler;
       return $.mobile.changePage("#admin");
     }
   };
@@ -27522,6 +27523,8 @@ var jsUri = Uri;
     HostHandler.HOSTS_INDEX = {};
 
     HostHandler.INSTANCE = null;
+
+    HostHandler.selected_host = null;
 
     HostHandler.base_url = function() {
       if (Config.is_running_in_browser()) {
