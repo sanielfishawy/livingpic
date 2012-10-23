@@ -27011,12 +27011,35 @@ var jsUri = Uri;
 
     ContactsHandler.get_list_success = function(contacts) {
       alert("Successfully found " + contacts.length + " contacts");
-      return ContactsHandler.contacts = contacts;
+      return ContactsHandler.contacts = contacts.map(function(contact) {
+        return {
+          id: contact.id,
+          display_name: contact.displayName,
+          name_obj: contact.name
+        };
+      });
     };
 
     ContactsHandler.get_list_error = function(error) {
       alert("Error loading contacts");
       return console.log(error);
+    };
+
+    ContactsHandler.upload_contacts = function(contacts) {
+      return $.ajax({
+        url: Config.base_url() + "/contacts",
+        type: "POST",
+        data: {
+          contacts: ContactsHandler.contacts
+        },
+        dataType: "json",
+        success: function() {
+          return alert("sent them ok");
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          return alert(errorThrown);
+        }
+      });
     };
 
     return ContactsHandler;
