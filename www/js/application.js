@@ -26466,7 +26466,6 @@ var Uri = function (uriString) {
 /* add compatibility for users of jsUri <= 1.1.1 */
 var jsUri = Uri;
 (function() {
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   $("#admin").live("pageshow", function() {
     $("#admin .client").html(Config.is_running_on_device() ? "Packaged App" : "Browser");
@@ -26475,214 +26474,6 @@ var jsUri = Uri;
       return new HostHandler;
     }
   });
-
-  window.HostHandler = (function() {
-
-    HostHandler.HOSTS = [
-      {
-        name: "None",
-        uri: ""
-      }, {
-        name: "Localhost",
-        uri: "127.0.0.1:3000"
-      }, {
-        name: "LivingPic.com",
-        uri: "www.livingpic.com"
-      }, {
-        name: "Sani Home",
-        uri: "192.168.1.72:3000"
-      }, {
-        name: "Sani Boat",
-        uri: "192.168.1.72:3000"
-      }, {
-        name: "Farhad Boat",
-        uri: "192.168.1.69:3000"
-      }, {
-        name: "Farhad Home",
-        uri: "10.0.1.18:3000"
-      }, {
-        name: "Tunnel Sani :9150",
-        uri: "www.trymyui.com:9150"
-      }, {
-        name: "Tunnel Farhad :9160",
-        uri: "www.trymyui.com:9160"
-      }
-    ];
-
-    HostHandler.HOSTS_INDEX = {};
-
-    HostHandler.INSTANCE = null;
-
-    function HostHandler() {
-      this.update_selected_host_html = __bind(this.update_selected_host_html, this);
-
-      this.populate_hosts_selector = __bind(this.populate_hosts_selector, this);
-
-      this.base_url = __bind(this.base_url, this);
-
-      this.host_uri = __bind(this.host_uri, this);
-
-      this.host_name = __bind(this.host_name, this);
-
-      this.host_info = __bind(this.host_info, this);
-
-      this.index_for_host = __bind(this.index_for_host, this);
-
-      this.handle_connection_error = __bind(this.handle_connection_error, this);
-
-      this.handle_connection_ok = __bind(this.handle_connection_ok, this);
-
-      this.check_host = __bind(this.check_host, this);
-
-      this.on_host_selector_change = __bind(this.on_host_selector_change, this);
-
-      this.determine_selected_host_first_time = __bind(this.determine_selected_host_first_time, this);
-
-      var h, i, _fn, _i, _len, _ref,
-        _this = this;
-      _ref = HostHandler.HOSTS;
-      _fn = function() {
-        return HostHandler.HOSTS_INDEX[h.uri] = i;
-      };
-      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-        h = _ref[i];
-        _fn();
-      }
-      this.populate_hosts_selector();
-      $("#host_select").bind("change", this.on_host_selector_change);
-      this.selected_host = null;
-      this.determine_selected_host_first_time();
-      this.update_selected_host_html();
-      HostHandler.INSTANCE = this;
-    }
-
-    HostHandler.prototype.determine_selected_host_first_time = function() {
-      if (Config.is_running_in_browser()) {
-        return this.check_host();
-      } else {
-        return this.selected_host = localStorage.host;
-      }
-    };
-
-    HostHandler.prototype.on_host_selector_change = function() {
-      this.selected_host = $("#host_select")[0].selectedIndex;
-      console.log(this.selected_host);
-      this.update_selected_host_html();
-      return this.check_host();
-    };
-
-    HostHandler.prototype.check_host = function() {
-      var base_url,
-        _this = this;
-      $.mobile.allowCrossDomainPages = true;
-      $.support.cors = true;
-      base_url = this.selected_host != null ? "http://" + (this.host_uri(this.selected_host)) : "";
-      if (Config.is_running_in_browser() || (this.selected_host != null)) {
-        return $.ajax({
-          async: false,
-          url: base_url + "/app/host",
-          success: function(data, textStatus, jqXHR) {
-            var host;
-            host = data.host;
-            _this.selected_host = _this.index_for_host(host);
-            if (_this.selected_host == null) {
-              alert("You are trying to access host: " + host + ". It isn't in the list of named hosts. Please update @HOSTS in the HostHander.");
-            }
-            return _this.handle_connection_ok();
-          },
-          error: function(jqXHR, textStatus, errorThrown) {
-            return _this.handle_connection_error(base_url, textStatus, errorThrown);
-          }
-        });
-      } else {
-        return false;
-      }
-    };
-
-    HostHandler.prototype.handle_connection_ok = function() {
-      $("#admin .host_status").html("200 OK");
-      $("#admin .host_status").css("color", "green");
-      if (this.selected_host != null) {
-        this.update_selected_host_html();
-      }
-      return localStorage["host"] = this.selected_host;
-    };
-
-    HostHandler.prototype.handle_connection_error = function(url, status, errorThrown) {
-      var err_msg;
-      err_msg = "Server Error: " + url + " -> " + status + ": " + errorThrown;
-      $("#admin .host_status").html(err_msg);
-      return $("#admin .host_status").css("color", "red");
-    };
-
-    HostHandler.prototype.index_for_host = function(host) {
-      return HostHandler.HOSTS_INDEX[host];
-    };
-
-    HostHandler.prototype.host_info = function(index) {
-      return HostHandler.HOSTS[index];
-    };
-
-    HostHandler.prototype.host_name = function(index) {
-      return this.host_info(index).name;
-    };
-
-    HostHandler.prototype.host_uri = function(index) {
-      return this.host_info(index).uri;
-    };
-
-    HostHandler.prototype.base_url = function() {
-      if (Config.is_running_in_browser()) {
-        return "";
-      } else if (this.selected_host != null) {
-        return "http://" + this.host_uri(this.selected_host);
-      } else {
-        alert("No host selected. Please select a host");
-        $.mobile.changePage("#admin");
-        return "";
-      }
-    };
-
-    HostHandler.prototype.populate_hosts_selector = function() {
-      var host, i, sel_opts, _fn, _i, _len, _ref;
-      sel_opts = [];
-      _ref = HostHandler.HOSTS;
-      _fn = function() {
-        var opt;
-        opt = $("<option></option>");
-        opt.attr("value", i);
-        opt.html(host.name + " | " + host.uri);
-        return sel_opts.push(opt);
-      };
-      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-        host = _ref[i];
-        _fn();
-      }
-      return $("#host_select").html(sel_opts);
-    };
-
-    HostHandler.prototype.update_selected_host_html = function() {
-      if (Config.is_running_in_browser()) {
-        $("#host_selector_block").hide();
-      }
-      $("#host_select option").removeAttr("selected");
-      if (this.selected_host != null) {
-        $("#admin .current_host").html("" + (this.host_name(this.selected_host)) + " - " + (this.host_uri(this.selected_host)));
-        $("#host_select option").eq(this.selected_host).attr("selected", true);
-      } else {
-        $("#admin .current_host").html("None - please select a host");
-      }
-      try {
-        $("#host_select").selectmenu('refresh', true);
-      } catch (error) {
-        return;
-      }
-      return $("#host_select option").removeAttr("selected");
-    };
-
-    return HostHandler;
-
-  })();
 
 }).call(this);
 (function() {
@@ -27641,6 +27432,218 @@ var jsUri = Uri;
   })();
 
 }).call(this);
+(function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  window.HostHandler = (function() {
+
+    HostHandler.HOSTS = [
+      {
+        name: "None",
+        uri: ""
+      }, {
+        name: "Localhost",
+        uri: "127.0.0.1:3000"
+      }, {
+        name: "LivingPic.com",
+        uri: "www.livingpic.com"
+      }, {
+        name: "Sani Home",
+        uri: "192.168.1.65:3000"
+      }, {
+        name: "Sani Boat",
+        uri: "192.168.1.72:3000"
+      }, {
+        name: "Farhad Boat",
+        uri: "192.168.1.69:3000"
+      }, {
+        name: "Farhad Home",
+        uri: "10.0.1.18:3000"
+      }, {
+        name: "Tunnel Sani :9150",
+        uri: "www.trymyui.com:9150"
+      }, {
+        name: "Tunnel Farhad :9160",
+        uri: "www.trymyui.com:9160"
+      }
+    ];
+
+    HostHandler.HOSTS_INDEX = {};
+
+    HostHandler.INSTANCE = null;
+
+    function HostHandler() {
+      this.update_selected_host_html = __bind(this.update_selected_host_html, this);
+
+      this.populate_hosts_selector = __bind(this.populate_hosts_selector, this);
+
+      this.base_url = __bind(this.base_url, this);
+
+      this.host_uri = __bind(this.host_uri, this);
+
+      this.host_name = __bind(this.host_name, this);
+
+      this.host_info = __bind(this.host_info, this);
+
+      this.index_for_host = __bind(this.index_for_host, this);
+
+      this.handle_connection_error = __bind(this.handle_connection_error, this);
+
+      this.handle_connection_ok = __bind(this.handle_connection_ok, this);
+
+      this.check_host = __bind(this.check_host, this);
+
+      this.on_host_selector_change = __bind(this.on_host_selector_change, this);
+
+      this.determine_selected_host_first_time = __bind(this.determine_selected_host_first_time, this);
+
+      var h, i, _fn, _i, _len, _ref,
+        _this = this;
+      _ref = HostHandler.HOSTS;
+      _fn = function() {
+        return HostHandler.HOSTS_INDEX[h.uri] = i;
+      };
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        h = _ref[i];
+        _fn();
+      }
+      this.populate_hosts_selector();
+      $("#host_select").bind("change", this.on_host_selector_change);
+      this.selected_host = null;
+      this.determine_selected_host_first_time();
+      this.update_selected_host_html();
+      HostHandler.INSTANCE = this;
+    }
+
+    HostHandler.prototype.determine_selected_host_first_time = function() {
+      if (Config.is_running_in_browser()) {
+        return this.check_host();
+      } else {
+        return this.selected_host = localStorage.host;
+      }
+    };
+
+    HostHandler.prototype.on_host_selector_change = function() {
+      this.selected_host = $("#host_select")[0].selectedIndex;
+      console.log(this.selected_host);
+      this.update_selected_host_html();
+      return this.check_host();
+    };
+
+    HostHandler.prototype.check_host = function() {
+      var base_url,
+        _this = this;
+      $.mobile.allowCrossDomainPages = true;
+      $.support.cors = true;
+      base_url = this.selected_host != null ? "http://" + (this.host_uri(this.selected_host)) : "";
+      if (Config.is_running_in_browser() || (this.selected_host != null)) {
+        return $.ajax({
+          async: false,
+          url: base_url + "/app/host",
+          success: function(data, textStatus, jqXHR) {
+            var host;
+            host = data.host;
+            _this.selected_host = _this.index_for_host(host);
+            if (_this.selected_host == null) {
+              alert("You are trying to access host: " + host + ". It isn't in the list of named hosts. Please update @HOSTS in the HostHander.");
+            }
+            return _this.handle_connection_ok();
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            return _this.handle_connection_error(base_url, textStatus, errorThrown);
+          }
+        });
+      } else {
+        return false;
+      }
+    };
+
+    HostHandler.prototype.handle_connection_ok = function() {
+      $("#admin .host_status").html("200 OK");
+      $("#admin .host_status").css("color", "green");
+      if (this.selected_host != null) {
+        this.update_selected_host_html();
+      }
+      return localStorage["host"] = this.selected_host;
+    };
+
+    HostHandler.prototype.handle_connection_error = function(url, status, errorThrown) {
+      var err_msg;
+      err_msg = "Server Error: " + url + " -> " + status + ": " + errorThrown;
+      $("#admin .host_status").html(err_msg);
+      return $("#admin .host_status").css("color", "red");
+    };
+
+    HostHandler.prototype.index_for_host = function(host) {
+      return HostHandler.HOSTS_INDEX[host];
+    };
+
+    HostHandler.prototype.host_info = function(index) {
+      return HostHandler.HOSTS[index];
+    };
+
+    HostHandler.prototype.host_name = function(index) {
+      return this.host_info(index).name;
+    };
+
+    HostHandler.prototype.host_uri = function(index) {
+      return this.host_info(index).uri;
+    };
+
+    HostHandler.prototype.base_url = function() {
+      if (Config.is_running_in_browser()) {
+        return "";
+      } else if (this.selected_host != null) {
+        return "http://" + this.host_uri(this.selected_host);
+      } else {
+        alert("No host selected. Please select a host");
+        $.mobile.changePage("#admin");
+        return "";
+      }
+    };
+
+    HostHandler.prototype.populate_hosts_selector = function() {
+      var host, i, sel_opts, _fn, _i, _len, _ref;
+      sel_opts = [];
+      _ref = HostHandler.HOSTS;
+      _fn = function() {
+        var opt;
+        opt = $("<option></option>");
+        opt.attr("value", i);
+        opt.html(host.name + " | " + host.uri);
+        return sel_opts.push(opt);
+      };
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        host = _ref[i];
+        _fn();
+      }
+      return $("#host_select").html(sel_opts);
+    };
+
+    HostHandler.prototype.update_selected_host_html = function() {
+      if (Config.is_running_in_browser()) {
+        $("#host_selector_block").hide();
+      }
+      $("#host_select option").removeAttr("selected");
+      if (this.selected_host != null) {
+        $("#admin .current_host").html("" + (this.host_name(this.selected_host)) + " - " + (this.host_uri(this.selected_host)));
+        $("#host_select option").eq(this.selected_host).attr("selected", true);
+      } else {
+        $("#admin .current_host").html("None - please select a host");
+      }
+      try {
+        $("#host_select").selectmenu('refresh', true);
+      } catch (error) {
+        return;
+      }
+      return $("#host_select option").removeAttr("selected");
+    };
+
+    return HostHandler;
+
+  })();
+
+}).call(this);
 // NOTE: we are calling the app w/in app (yuk!) because the context of 'this' changes when we are in an event handler, 
 // at that point it points to the event and not to this object that we define
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -27648,20 +27651,6 @@ var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments)
 var app = {
     location: null,
     contacts: null,
-    base_url: "http://192.168.1.69:3000",
-    // For my home system
-    // base_url: "http://10.0.1.18:3000",
-    
-    initialize: function() {
-      alert("in app.initialize()")
-      // This one for Sensa Touch - app is defined in app.js
-      // document.addEventListener('deviceready', touchapp.mainLaunch, false);
-      this.deviceready = __bind(this.deviceready,this)
-      document.addEventListener('deviceready', this.deviceready, false);
-
-      // Uncomment this to simulate in browser
-      // this.deviceready()
-    },
     
     deviceready: function() {
         // Was for testing only - no longer necessary
@@ -27677,13 +27666,6 @@ var app = {
         // initPushwoosh(cordova);
     },
     
-    // This is old stuff (deprecated).... keep it here for now but remove it soon
-    report: function(id) { 
-        console.log("report:" + id);
-        // hide the .pending <p> and show the .complete <p>
-        $('#' + id + ' .pending').hide();
-        $('#' + id + ' .complete').show();
-    },
     
     // Initialize the application - this is the stuff that comes from our server code 
     // Keep it here for now for encapsulation
@@ -27784,7 +27766,7 @@ var app = {
 
         var ft = new FileTransfer();
         alert("Starting the upload of "+ imageURI);
-        ft.upload(imageURI, encodeURI(app.base_url + "/photos/create"), app.uploadSuccess, app.uploadFailure, options);
+        ft.upload(imageURI, encodeURI(Config.base_url + "/photos/create"), app.uploadSuccess, app.uploadFailure, options);
     },
 
     uploadSuccess: function(r) {
@@ -27833,9 +27815,9 @@ var app = {
     },
     
     uploadContacts:function(contacts) {
-      alert("posting " + contacts.length + " contacts to "+ app.base_url + "/invite");
+      alert("posting " + contacts.length + " contacts to "+ Config.base_url + "/invite");
       $.ajax({
-        url: app.base_url + "/contacts",
+        url: Config.base_url + "/contacts",
         type: "POST",
         data: {contacts: JSON.stringify(contacts)},
         dataType: "json",
