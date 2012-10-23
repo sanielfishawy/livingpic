@@ -27578,22 +27578,18 @@ var jsUri = Uri;
     }
 
     HostHandler.prototype.determine_selected_host_first_time = function() {
-      console.log("determine first time");
       if (Config.is_running_in_browser()) {
         return this.check_host();
       } else {
-        console.log("setting selected_host to " + localStorage.host);
         this.selected_host = localStorage.host;
-        console.log("selected_host = " + this.selected_host);
         return this.check_host();
       }
     };
 
     HostHandler.prototype.on_host_selector_change = function() {
       this.selected_host = $("#host_select")[0].selectedIndex;
-      console.log(this.selected_host);
-      this.update_selected_host_html();
-      return this.check_host();
+      this.check_host();
+      return this.update_selected_host_html();
     };
 
     HostHandler.prototype.check_host = function() {
@@ -27603,7 +27599,6 @@ var jsUri = Uri;
       $.support.cors = true;
       base_url = this.selected_host != null ? "http://" + (this.host_uri(this.selected_host)) : "";
       if (Config.is_running_in_browser() || (this.selected_host != null)) {
-        console.log("checking host: " + base_url);
         return $.ajax({
           async: false,
           url: base_url + "/app/host",
@@ -27687,11 +27682,10 @@ var jsUri = Uri;
         $("#admin .current_host").html("None - please select a host");
       }
       try {
-        $("#host_select").selectmenu('refresh', true);
+        return $("#host_select").selectmenu('refresh', true);
       } catch (error) {
-        return;
+
       }
-      return $("#host_select option").removeAttr("selected");
     };
 
     return HostHandler;
