@@ -26996,42 +26996,87 @@ var jsUri = Uri;
 }).call(this);
 (function() {
 
-  window.ContactsHandler = (function() {
+  window.Contacts = (function() {
 
-    function ContactsHandler() {}
+    function Contacts() {}
 
-    ContactsHandler.indexed_contacts = null;
+    Contacts.indexed_contacts = null;
 
-    ContactsHandler.contacts = null;
+    Contacts.contacts = null;
 
-    ContactsHandler.get_list_from_device = function() {
+    Contacts.contacts_directory = {};
+
+    Contacts.full_list = function(callback) {
+      if (Contacts.contacts != null) {
+        callback(Contacts.contacts);
+        return null;
+      }
+      if (Config.is_running_in_browser()) {
+        return Contacts.get_list_from_server(callback);
+      } else {
+        return Contacts.get_list_from_device(callback);
+      }
+    };
+
+    Contacts.get_list_from_device = function(callback) {
       return navigator.contacts.find(["displayName", "name"], ContactsHandler.get_list_success, ContactsHandler.get_list_error, {
         multiple: true
       });
     };
 
-    ContactsHandler.get_list_success = function(contacts) {
-      alert("Successfully found " + contacts.length + " contacts");
-      return ContactsHandler.contacts = contacts.map(function(contact) {
+    Contacts.get_list_success = function(contacts, callback) {
+      console.log("Successfully found " + contacts.length + " contacts");
+      Contacts.contacts = contacts.map(function(contact) {
         return {
           id: contact.id,
-          display_name: contact.displayName,
-          name_obj: contact.name
+          name: contact.displayName
         };
       });
+      return callback(Contacts.contacts);
     };
 
-    ContactsHandler.get_list_error = function(error) {
+    Contacts.get_list_error = function(error) {
       alert("Error loading contacts");
       return console.log(error);
     };
 
-    ContactsHandler.upload_contacts = function(contacts) {
+    Contacts.get_list_from_server = function(callback) {
+      return $.ajax({
+        dataType: "json",
+        url: Config.base_url() + "/app/get_contacts",
+        success: function(response) {
+          return Contacts.handle_list_from_server(response, callback);
+        }
+      });
+    };
+
+    Contacts.handle_list_from_server = function(contacts, callback) {
+      Contacts.contacts_directory = {};
+      contacts.filter(function(c) {
+        return c.fullname != null;
+      }).map(function(c) {
+        return Contacts.contacts_directory[c.id] = c;
+      });
+      Contacts.contacts = contacts.filter(function(c) {
+        return c.fullname != null;
+      }).sort(function(a, b) {
+        return $.trim(a.fullname.toLowerCase) < $.trim(b.fullname.toLowerCase);
+      }).map(function(c) {
+        return {
+          id: c.id,
+          str: c.fullname
+        };
+      });
+      callback(Contacts.contacts);
+      return null;
+    };
+
+    Contacts.upload_contacts = function(contacts) {
       return $.ajax({
         url: Config.base_url() + "/contacts",
         type: "POST",
         data: {
-          contacts: ContactsHandler.contacts
+          contacts: Contacts.contacts
         },
         dataType: "json",
         success: function() {
@@ -27043,43 +27088,9 @@ var jsUri = Uri;
       });
     };
 
-    return ContactsHandler;
+    return Contacts;
 
   }).call(this);
-
-  window.get_contacts = function(options) {
-    if (options == null) {
-      options = {};
-    }
-    console.log("in window.get_contacts");
-    if (!contact_list() || options.fresh === true) {
-      console.log("getting contacts from the server");
-      return $.ajax({
-        async: false,
-        url: Config.base_url() + "/app/get_contacts",
-        success: function(response) {
-          set_contact_list(JSON.parse(response));
-          return create_indexed_contact_list();
-        }
-      });
-    }
-  };
-
-  window.create_indexed_contact_list = function() {
-    var contact, i_c_l, _fn, _i, _len, _ref;
-    i_c_l = {};
-    if (contact_list() != null) {
-      _ref = contact_list();
-      _fn = function() {
-        return i_c_l[contact["id"]] = contact;
-      };
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        contact = _ref[_i];
-        _fn();
-      }
-    }
-    return set_indexed_contact_list(i_c_l);
-  };
 
 }).call(this);
 (function() {
@@ -28067,30 +28078,6 @@ getUrlParam = function(url,name) {
     return ids.map(function(id) {
       return indexed_contact_list()[id];
     });
-  };
-
-  this.contact_list = function() {
-    return appState.get("contact_list");
-  };
-
-  this.set_contact_list = function(obj) {
-    return appState.set("contact_list", obj);
-  };
-
-  this.clear_contact_list = function() {
-    return appState.clear("contact_list");
-  };
-
-  this.indexed_contact_list = function() {
-    return appState.get("indexed_contact_list");
-  };
-
-  this.set_indexed_contact_list = function(obj) {
-    return appState.set("indexed_contact_list", obj);
-  };
-
-  this.clear_indexed_contact_list = function() {
-    return appState.clear("indexed_contact_list");
   };
 
   this.invitees = function() {
