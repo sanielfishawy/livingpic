@@ -27020,12 +27020,12 @@ var jsUri = Uri;
 
     Contacts.get_list_from_device = function(callback) {
       Contacts.device_call_back = callback;
-      return navigator.contacts.find(["displayName", "name"], Contacts.get_list_success, Contacts.get_list_error, {
+      return navigator.contacts.find(["displayName", "name"], Contacts.handle_list_from_device, Contacts.get_list_error, {
         multiple: true
       });
     };
 
-    Contacts.get_list_success = function(contacts) {
+    Contacts.handle_list_from_device = function(contacts) {
       console.log("Successfully found " + contacts.length + " contacts");
       Contacts.contacts = contacts.filter(function(c) {
         return c.displayName != null;
