@@ -26471,7 +26471,7 @@ var jsUri = Uri;
   $("#admin").live("pageshow", function() {
     $("#admin .client").html(Config.is_running_on_device() ? "Packaged App" : "Browser");
     $("#admin .client").css("color", Config.is_running_on_device() ? "red" : "blue");
-    if (sHostHandler.INSTANCE == null) {
+    if (HostHandler.INSTANCE == null) {
       return new HostHandler;
     }
   });
@@ -26635,7 +26635,7 @@ var jsUri = Uri;
       if (Config.is_running_in_browser()) {
         return "";
       } else if (this.selected_host != null) {
-        return host_uri(this.selected_host);
+        return this.host_uri(this.selected_host);
       } else {
         alert("No host selected. Please select a host");
         $.mobile.changePage("#admin");
