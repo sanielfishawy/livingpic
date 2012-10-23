@@ -26878,7 +26878,7 @@ var jsUri = Uri;
 }).call(this);
 (function() {
 
-  $(document).bind('pageinit', function() {
+  $(document).ready(function() {
     if (Config.is_running_on_device()) {
       return $(document).bind("deviceready", function() {
         return Boot.initialize();
@@ -26994,6 +26994,37 @@ var jsUri = Uri;
 
 }).call(this);
 (function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  window.ContactsHandler = (function() {
+
+    function ContactsHandler() {
+      this.get_list_error = __bind(this.get_list_error, this);
+
+      this.get_list_success = __bind(this.get_list_success, this);
+
+    }
+
+    ContactsHandler.indexed_contacts = null;
+
+    ContactsHandler.get_list_from_device = function() {
+      return navigator.contacts.find(["displayName", "name"], ContactsHandler.get_list_success, ContactsHandler.get_list_error, {
+        multiple: true
+      });
+    };
+
+    ContactsHandler.prototype.get_list_success = function(contacts) {
+      return alert("Successfully found " + contacts.length + " contacts");
+    };
+
+    ContactsHandler.prototype.get_list_error = function(error) {
+      alert("Error loading contacts");
+      return console.log(error);
+    };
+
+    return ContactsHandler;
+
+  }).call(this);
 
   window.get_contacts = function(options) {
     if (options == null) {
@@ -27472,12 +27503,22 @@ var jsUri = Uri;
 
     HostHandler.INSTANCE = null;
 
+    HostHandler.base_url = function() {
+      if (Config.is_running_in_browser()) {
+        return "";
+      } else if (HostHandler.selected_host != null) {
+        return "http://" + HostHandler.host_uri(HostHandler.selected_host);
+      } else {
+        alert("No host selected. Please select a host");
+        $.mobile.changePage("#admin");
+        return "";
+      }
+    };
+
     function HostHandler() {
       this.update_selected_host_html = __bind(this.update_selected_host_html, this);
 
       this.populate_hosts_selector = __bind(this.populate_hosts_selector, this);
-
-      this.base_url = __bind(this.base_url, this);
 
       this.host_uri = __bind(this.host_uri, this);
 
@@ -27590,18 +27631,6 @@ var jsUri = Uri;
       return this.host_info(index).uri;
     };
 
-    HostHandler.prototype.base_url = function() {
-      if (Config.is_running_in_browser()) {
-        return "";
-      } else if (this.selected_host != null) {
-        return "http://" + this.host_uri(this.selected_host);
-      } else {
-        alert("No host selected. Please select a host");
-        $.mobile.changePage("#admin");
-        return "";
-      }
-    };
-
     HostHandler.prototype.populate_hosts_selector = function() {
       var host, i, sel_opts, _fn, _i, _len, _ref;
       sel_opts = [];
@@ -27641,7 +27670,7 @@ var jsUri = Uri;
 
     return HostHandler;
 
-  })();
+  }).call(this);
 
 }).call(this);
 // NOTE: we are calling the app w/in app (yuk!) because the context of 'this' changes when we are in an event handler, 
@@ -28241,6 +28270,36 @@ getUrlParam = function(url,name) {
 }).call(this);
 (function() {
 
+  window.submit_new_user_name = function(form_data) {
+    var name;
+    name = array_to_hash(trim_all_form_data(form_data));
+    if (name.first_name === "") {
+      alert("Please enter your first name");
+      return;
+    }
+    if (name.last_name === "") {
+      alert("Please enter your last name");
+      return;
+    }
+    return $.ajax({
+      url: Config.base_url() + "/users/new",
+      type: "POST",
+      data: name,
+      async: false,
+      success: function(response) {
+        set_current_user(response);
+        register();
+        return $.mobile.changePage("#confirm_known_user");
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        return alert("User creation failed with error " + errorThrown);
+      }
+    });
+  };
+
+}).call(this);
+(function() {
+
   $(document).ready(function() {
     return $("#tag_pic").bind("pageshow", function(event) {
       return window.ac = new AutoComplete({
@@ -28297,7 +28356,7 @@ getUrlParam = function(url,name) {
       if (!HostHandler.INSTANCE) {
         new HostHandler;
       }
-      return HostHandler.INSTANCE.base_url();
+      return HostHandler.base_url();
     },
     cookie_redirect_base_url: function(using_app) {
       if (using_app != null) {
