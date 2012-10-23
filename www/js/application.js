@@ -27019,7 +27019,7 @@ var jsUri = Uri;
     };
 
     Contacts.get_list_from_device = function(callback) {
-      return navigator.contacts.find(["displayName", "name"], ContactsHandler.get_list_success, ContactsHandler.get_list_error, {
+      return navigator.contacts.find(["displayName", "name"], Contacts.get_list_success, Contacts.get_list_error, {
         multiple: true
       });
     };
