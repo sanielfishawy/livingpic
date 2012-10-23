@@ -27766,7 +27766,7 @@ var app = {
 
         var ft = new FileTransfer();
         alert("Starting the upload of "+ imageURI);
-        ft.upload(imageURI, encodeURI(Config.base_url + "/photos/create"), app.uploadSuccess, app.uploadFailure, options);
+        ft.upload(imageURI, encodeURI(Config.base_url() + "/photos/create"), app.uploadSuccess, app.uploadFailure, options);
     },
 
     uploadSuccess: function(r) {
@@ -27815,9 +27815,9 @@ var app = {
     },
     
     uploadContacts:function(contacts) {
-      alert("posting " + contacts.length + " contacts to "+ Config.base_url + "/invite");
+      alert("posting " + contacts.length + " contacts to "+ Config.base_url() + "/invite");
       $.ajax({
-        url: Config.base_url + "/contacts",
+        url: Config.base_url() + "/contacts",
         type: "POST",
         data: {contacts: JSON.stringify(contacts)},
         dataType: "json",
