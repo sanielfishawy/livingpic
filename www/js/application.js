@@ -26872,8 +26872,10 @@ var jsUri = Uri;
 (function() {
 
   $(document).ready(function() {
+    alert("in boot");
     if (Config.is_running_on_device()) {
       return $(document).bind("deviceready", function() {
+        alert("in device ready");
         return Boot.initialize();
       });
     } else {
@@ -26883,6 +26885,7 @@ var jsUri = Uri;
 
   this.Boot = {
     initialize: function() {
+      Contacts.prefetch();
       new HostHandler;
       return $.mobile.changePage("#admin");
     }
