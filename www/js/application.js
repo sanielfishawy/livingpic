@@ -26484,13 +26484,15 @@ var jsUri = Uri;
 
     AutoComplete.prototype.page_id = null;
 
-    AutoComplete.prototype.name_of_self = null;
+    AutoComplete.prototype.full_list = null;
 
     AutoComplete.prototype.theme = null;
 
     AutoComplete.prototype.template_for_list_item = null;
 
     AutoComplete.prototype.template_for_picked_item = null;
+
+    AutoComplete.INSTANCE = null;
 
     AutoComplete.prototype.acp = null;
 
@@ -26505,20 +26507,21 @@ var jsUri = Uri;
       }
       this.picked_items = __bind(this.picked_items, this);
 
-      if (options.name_of_self == null) {
-        $.error("AutoComplete requires that  you pass in the name the instance of it that you created so that it can create the appropriate onclick text for the search results.");
-      }
-      this.name_of_self = options.name_of_self;
+      AutoComplete.INSTANCE = this;
       if (options.page_id == null) {
         $.error("AutoComplete requires a page_id. This should be the id of the page containing the autocomple view elements.");
       }
       this.page_id = options.page_id;
+      if (options.full_list == null) {
+        $.error("AutoComplete requires 'options.full_list. Which should be array of the form: id: integer, str: String");
+      }
+      this.full_list = options.full_list;
       this.theme = options.theme != null ? options.theme : "c";
       search_input_field = $("#" + this.page_id + " .auto_complete_search_input_field");
       search_results_box = $("#" + this.page_id + " .auto_complete_search_results_box");
       picked_items_box = $("#" + this.page_id + " .auto_complete_picked_items_box");
       this.template_for_list_item = options.template_for_list_item != null ? options.template_for_list_item : "<li data-auto_complete_id='list_item_id'                                                                                                                 data-auto_complete_str='list_item_str'                                                                                                                  class='ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-btn-up-" + this.theme + "'                                                                                                                 onclick='list_item_pick_onclick_text' >                                                                                                              <div class='ui-btn-inner ui-li'>                                                                                                                <div class='ui-btn-text'>                                                                                                                  <a class='ui-link-inherit' href='#'>list_item_str</a>                                                                                                                </div>                                                                                                                <span class='ui-icon ui-icon-plus ui-icon-shadow'> </span>                                                                                                              </div>                                                                                                            </li>";
-      this.template_for_picked_item = options.template_for_picked_item != null ? options.template_for_picked_item : "<a class='ui-btn ui-btn-inline ui-shadow ui-btn-corner-all ui-mini ui-btn-icon-right ui-btn-up-" + this.theme + "'                                                                                                                       data-auto_complete_id=''                                                                                                                      onclick='" + this.name_of_self + ".acp.delete(this)'>                                                                                                                      <span class='ui-btn-inner ui-btn-corner-all'>                                                                                                                        <span class='ui-btn-text'>Some text</span>                                                                                                                        <span class='ui-icon ui-icon-delete ui-icon-shadow'> </span>                                                                                                                      </span>                                                                                                                    </a>";
+      this.template_for_picked_item = options.template_for_picked_item != null ? options.template_for_picked_item : "<a class='ui-btn ui-btn-inline ui-shadow ui-btn-corner-all ui-mini ui-btn-icon-right ui-btn-up-" + this.theme + "'                                                                                                                       data-auto_complete_id=''                                                                                                                      onclick='AutoComplete.INSTANCE.acp.delete(this)'>                                                                                                                      <span class='ui-btn-inner ui-btn-corner-all'>                                                                                                                        <span class='ui-btn-text'>Some text</span>                                                                                                                        <span class='ui-icon ui-icon-delete ui-icon-shadow'> </span>                                                                                                                      </span>                                                                                                                    </a>";
       this.acd = new AutoCompleteDisplay({
         page_id: this.page_id
       });
@@ -26529,9 +26532,10 @@ var jsUri = Uri;
         on_pick: this.acd.on_pick
       });
       this.acs = new AutoCompleteSearch({
+        full_list: this.full_list,
         search_input_field: search_input_field,
         search_results_box: search_results_box,
-        pick_onclick_text: "" + this.name_of_self + ".acp.pick(this)",
+        pick_onclick_text: "AutoComplete.INSTANCE.acp.pick(this)",
         on_auto_complete: this.acd.on_auto_complete,
         template_for_list_item: this.template_for_list_item
       });
@@ -26605,21 +26609,10 @@ var jsUri = Uri;
       if (options.on_auto_complete != null) {
         this.on_auto_complete = options.on_auto_complete;
       }
-      if (options.full_list != null) {
-        this.full_list = options.full_list;
-      } else {
-        get_contacts({
-          fresh: false
-        });
-        this.full_list = contact_list().filter(function(contact) {
-          return contact.fullname != null;
-        }).map(function(contact) {
-          return {
-            id: contact.id,
-            str: contact.fullname
-          };
-        });
+      if (options.full_list == null) {
+        $.error("AutoCompleteSearch requires 'options.full_list'");
       }
+      this.full_list = options.full_list;
       this.setup_first_letter_list();
       this.setup_event_listner_on_search_input();
     }
@@ -26630,7 +26623,6 @@ var jsUri = Uri;
         var exp;
         exp = _this.search_input_field.val();
         _this.search_results_box.html(_this.check(exp));
-        console.log(_this.on_auto_complete.toString());
         return _this.on_auto_complete();
       });
     };
@@ -26789,6 +26781,7 @@ var jsUri = Uri;
         $.error("AutoCompletePick requires a template_for_picked_item");
       }
       this.template_for_picked_item = options.template_for_picked_item;
+      this.picked_items = {};
       if (options.on_pick != null) {
         this.on_pick = options.on_pick;
       }
@@ -27000,14 +26993,26 @@ var jsUri = Uri;
 
     function Contacts() {}
 
-    Contacts.indexed_contacts = null;
-
     Contacts.contacts = null;
 
     Contacts.contacts_directory = {};
 
-    Contacts.full_list = function(callback) {
-      if (Contacts.contacts != null) {
+    Contacts.prefetch = function(options) {
+      var c;
+      if (options == null) {
+        options = {};
+      }
+      c = function() {};
+      if (!(Contacts.contacts != null) || (options.fresh != null)) {
+        return Contacts.full_list(c, options);
+      }
+    };
+
+    Contacts.full_list = function(callback, options) {
+      if (options == null) {
+        options = {};
+      }
+      if ((Contacts.contacts != null) && !(options.fresh != null)) {
         callback(Contacts.contacts);
         return null;
       }
@@ -27965,19 +27970,27 @@ getUrlParam = function(url,name) {
 ;
 (function() {
 
+  window.goto_invite_page = function() {
+    return Contacts.full_list(function(full_list) {
+      new AutoComplete({
+        page_id: "invite",
+        full_list: full_list
+      });
+      return $.mobile.changePage("#invite");
+    });
+  };
+
   $(document).ready(function() {
     return $("#invite").bind("pageshow", function(event) {
-      window.ac = new AutoComplete({
-        name_of_self: "ac",
-        page_id: "invite"
-      });
-      return $("#invite .current_occasion").html(current_occasion().name);
+      $("#invite .current_occasion").html(current_occasion().name);
+      $("#invite .auto_complete_picked_items_box").html("");
+      return $("#invite .help").show();
     });
   });
 
   window.invite_done = function() {
-    console.log("picked keys = " + keys(ac.picked_items()));
-    set_invitees(keys(ac.picked_items()));
+    console.log("picked keys = " + keys(AutoComplete.INSTANCE.picked_items()));
+    set_invitees(keys(AutoComplete.INSTANCE.picked_items()));
     console.log(find_contacts_by_id(invitees()));
     $.ajax({
       url: Config.base_url() + "/invite",
