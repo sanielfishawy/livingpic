@@ -27577,10 +27577,13 @@ var jsUri = Uri;
     }
 
     HostHandler.prototype.determine_selected_host_first_time = function() {
+      console.log("determine first time");
       if (Config.is_running_in_browser()) {
         return this.check_host();
       } else {
+        console.log("setting selected_host to " + localStorage.host);
         this.selected_host = localStorage.host;
+        console.log("selected_host = " + this.selected_host);
         return this.check_host();
       }
     };
@@ -27599,6 +27602,7 @@ var jsUri = Uri;
       $.support.cors = true;
       base_url = this.selected_host != null ? "http://" + (this.host_uri(this.selected_host)) : "";
       if (Config.is_running_in_browser() || (this.selected_host != null)) {
+        console.log("checking host: " + base_url);
         return $.ajax({
           async: false,
           url: base_url + "/app/host",
