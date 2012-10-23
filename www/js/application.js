@@ -27019,21 +27019,23 @@ var jsUri = Uri;
     };
 
     Contacts.get_list_from_device = function(callback) {
-      return navigator.contacts.find(["displayName", "name"], Contacts.get_list_success, Contacts.get_list_error, {
+      return navigator.contacts.find(["displayName", "name"], Contacts.get_list_success(callback), Contacts.get_list_error, {
         multiple: true
       });
     };
 
     Contacts.get_list_success = function(contacts, callback) {
       console.log("Successfully found " + contacts.length + " contacts");
-      Contacts.contacts = contacts.map(function(contact) {
+      Contacts.contacts = contacts.filter(function(c) {
+        return c.displayName != null;
+      }).sort(function(a, b) {
+        return $.trim(a.displayName.toLowerCase) < $.trim(b.displayName.toLowerCase);
+      }).map(function(c) {
         return {
-          id: contact.id,
-          str: contact.displayName
+          id: c.id,
+          str: c.displayName
         };
       });
-      console.log(Contacts.contacts.length);
-      console.log(Contacts.contacts[1000]);
       return callback(Contacts.contacts);
     };
 
