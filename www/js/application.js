@@ -26560,7 +26560,7 @@ var jsUri = Uri;
       if (Config.is_running_in_browser()) {
         return this.check_host();
       } else {
-        return this.selected_host = localStorage["host"];
+        return this.selected_host = localStorage.host;
       }
     };
 
@@ -26605,7 +26605,7 @@ var jsUri = Uri;
       if (this.selected_host != null) {
         this.update_selected_host_html();
       }
-      return localStorage["host"];
+      return localStorage["host"] = this.selected_host;
     };
 
     HostHandler.prototype.handle_connection_error = function(url, status, errorThrown) {
@@ -26635,7 +26635,7 @@ var jsUri = Uri;
       if (Config.is_running_in_browser()) {
         return "";
       } else if (this.selected_host != null) {
-        return this.host_uri(this.selected_host);
+        return "http://" + this.host_uri(this.selected_host);
       } else {
         alert("No host selected. Please select a host");
         $.mobile.changePage("#admin");
