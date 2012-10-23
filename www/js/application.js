@@ -26466,18 +26466,17 @@ var Uri = function (uriString) {
 /* add compatibility for users of jsUri <= 1.1.1 */
 var jsUri = Uri;
 (function() {
-  var HostHandler,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   $("#admin").live("pageshow", function() {
-    $("#admin .client").html(typeof app !== "undefined" && app !== null ? "Packaged App" : "Browser");
-    $("#admin .client").css("color", typeof app !== "undefined" && app !== null ? "red" : "blue");
-    if (!window.host_handler) {
-      return window.host_handler = new HostHandler;
+    $("#admin .client").html(Config.is_running_on_device() ? "Packaged App" : "Browser");
+    $("#admin .client").css("color", Config.is_running_on_device() ? "red" : "blue");
+    if (sHostHandler.INSTANCE == null) {
+      return new HostHandler;
     }
   });
 
-  HostHandler = (function() {
+  window.HostHandler = (function() {
 
     HostHandler.HOSTS = [
       {
@@ -26512,10 +26511,14 @@ var jsUri = Uri;
 
     HostHandler.HOSTS_INDEX = {};
 
+    HostHandler.INSTANCE = null;
+
     function HostHandler() {
       this.update_selected_host_html = __bind(this.update_selected_host_html, this);
 
       this.populate_hosts_selector = __bind(this.populate_hosts_selector, this);
+
+      this.base_url = __bind(this.base_url, this);
 
       this.host_uri = __bind(this.host_uri, this);
 
@@ -26550,6 +26553,7 @@ var jsUri = Uri;
       this.selected_host = null;
       this.determine_selected_host_first_time();
       this.update_selected_host_html();
+      HostHandler.INSTANCE = this;
     }
 
     HostHandler.prototype.determine_selected_host_first_time = function() {
@@ -26584,10 +26588,7 @@ var jsUri = Uri;
             if (_this.selected_host == null) {
               alert("You are trying to access host: " + host + ". It isn't in the list of named hosts. Please update @HOSTS in the HostHander.");
             }
-            _this.handle_connection_ok();
-            if (_this.selected_host != null) {
-              return _this.update_selected_host_html();
-            }
+            return _this.handle_connection_ok();
           },
           error: function(jqXHR, textStatus, errorThrown) {
             return _this.handle_connection_error(base_url, textStatus, errorThrown);
@@ -26600,15 +26601,18 @@ var jsUri = Uri;
 
     HostHandler.prototype.handle_connection_ok = function() {
       $("#admin .host_status").html("200 OK");
-      return $("#admin .host_status").css("color", "green");
+      $("#admin .host_status").css("color", "green");
+      if (this.selected_host != null) {
+        this.update_selected_host_html();
+      }
+      return localStorage["host"];
     };
 
     HostHandler.prototype.handle_connection_error = function(url, status, errorThrown) {
       var err_msg;
       err_msg = "Server Error: " + url + " -> " + status + ": " + errorThrown;
       $("#admin .host_status").html(err_msg);
-      $("#admin .host_status").css("color", "red");
-      return alert(err_msg);
+      return $("#admin .host_status").css("color", "red");
     };
 
     HostHandler.prototype.index_for_host = function(host) {
@@ -26625,6 +26629,18 @@ var jsUri = Uri;
 
     HostHandler.prototype.host_uri = function(index) {
       return this.host_info(index).uri;
+    };
+
+    HostHandler.prototype.base_url = function() {
+      if (Config.is_running_in_browser()) {
+        return "";
+      } else if (this.selected_host != null) {
+        return host_uri(this.selected_host);
+      } else {
+        alert("No host selected. Please select a host");
+        $.mobile.changePage("#admin");
+        return "";
+      }
     };
 
     HostHandler.prototype.populate_hosts_selector = function() {
@@ -26656,7 +26672,11 @@ var jsUri = Uri;
       } else {
         $("#admin .current_host").html("None - please select a host");
       }
-      $("#host_select").selectmenu('refresh', true);
+      try {
+        $("#host_select").selectmenu('refresh', true);
+      } catch (error) {
+        return;
+      }
       return $("#host_select option").removeAttr("selected");
     };
 
@@ -27067,7 +27087,7 @@ var jsUri = Uri;
 }).call(this);
 (function() {
 
-  $(document).ready(function() {
+  $(document).bind('pageinit', function() {
     if (Config.is_running_on_device()) {
       return $(document).bind("deviceready", function() {
         return Boot.initialize();
@@ -28292,11 +28312,10 @@ getUrlParam = function(url,name) {
       }
     },
     base_url: function() {
-      if (typeof app !== "undefined" && app !== null) {
-        return app.base_url;
-      } else {
-        return "";
+      if (!HostHandler.INSTANCE) {
+        new HostHandler;
       }
+      return HostHandler.INSTANCE.base_url();
     },
     cookie_redirect_base_url: function(using_app) {
       if (using_app != null) {
