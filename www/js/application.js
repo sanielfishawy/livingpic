@@ -26872,10 +26872,8 @@ var jsUri = Uri;
 (function() {
 
   $(document).ready(function() {
-    alert("in boot");
     if (Config.is_running_on_device()) {
       return $(document).bind("deviceready", function() {
-        alert("in device ready");
         return Boot.initialize();
       });
     } else {
@@ -26885,7 +26883,9 @@ var jsUri = Uri;
 
   this.Boot = {
     initialize: function() {
-      Contacts.prefetch();
+      Contacts.prefetch({
+        fresh: false
+      });
       new HostHandler;
       return $.mobile.changePage("#admin");
     }
@@ -26996,27 +26996,24 @@ var jsUri = Uri;
 
     function Contacts() {}
 
-    Contacts.contacts = null;
-
-    Contacts.contacts_directory = {};
-
     Contacts.prefetch = function(options) {
       var c;
       if (options == null) {
         options = {};
       }
       c = function() {};
-      if (!(Contacts.contacts != null) || (options.fresh != null)) {
-        return Contacts.full_list(c, options);
+      if (!(contacts() != null) || Contacts.is_fresh(options)) {
+        Contacts.full_list(c, options);
       }
+      return contacts().length;
     };
 
     Contacts.full_list = function(callback, options) {
       if (options == null) {
         options = {};
       }
-      if ((Contacts.contacts != null) && !(options.fresh != null)) {
-        callback(Contacts.contacts);
+      if ((contacts() != null) && !Contacts.is_fresh(options)) {
+        callback(contacts());
         return null;
       }
       if (Config.is_running_in_browser()) {
@@ -27026,6 +27023,10 @@ var jsUri = Uri;
       }
     };
 
+    Contacts.is_fresh = function(options) {
+      return (options.fresh != null) && options.fresh;
+    };
+
     Contacts.get_list_from_device = function(callback) {
       Contacts.device_call_back = callback;
       return navigator.contacts.find(["displayName", "name"], Contacts.handle_list_from_device, Contacts.get_list_error, {
@@ -27033,9 +27034,9 @@ var jsUri = Uri;
       });
     };
 
-    Contacts.handle_list_from_device = function(contacts) {
-      console.log("Successfully found " + contacts.length + " contacts");
-      Contacts.contacts = contacts.filter(function(c) {
+    Contacts.handle_list_from_device = function(cntcts) {
+      console.log("Successfully found " + cntcts.length + " contacts");
+      set_contacts(cntcts.filter(function(c) {
         return c.displayName != null;
       }).sort(function(a, b) {
         return $.trim(a.displayName.toLowerCase) < $.trim(b.displayName.toLowerCase);
@@ -27044,8 +27045,8 @@ var jsUri = Uri;
           id: c.id,
           str: c.displayName
         };
-      });
-      return Contacts.device_call_back(Contacts.contacts);
+      }));
+      return Contacts.device_call_back(contacts());
     };
 
     Contacts.get_list_error = function(error) {
@@ -27063,14 +27064,16 @@ var jsUri = Uri;
       });
     };
 
-    Contacts.handle_list_from_server = function(contacts, callback) {
-      Contacts.contacts_directory = {};
-      contacts.filter(function(c) {
+    Contacts.handle_list_from_server = function(cntcts, callback) {
+      var cd;
+      cd = {};
+      cntcts.filter(function(c) {
         return c.fullname != null;
       }).map(function(c) {
-        return Contacts.contacts_directory[c.id] = c;
+        return cd[c.id] = c;
       });
-      Contacts.contacts = contacts.filter(function(c) {
+      set_contacts_directory(cd);
+      set_contacts(cntcts.filter(function(c) {
         return c.fullname != null;
       }).sort(function(a, b) {
         return $.trim(a.fullname.toLowerCase) < $.trim(b.fullname.toLowerCase);
@@ -27079,8 +27082,8 @@ var jsUri = Uri;
           id: c.id,
           str: c.fullname
         };
-      });
-      callback(Contacts.contacts);
+      }));
+      callback(contacts());
       return null;
     };
 
@@ -27089,7 +27092,7 @@ var jsUri = Uri;
         url: Config.base_url() + "/contacts",
         type: "POST",
         data: {
-          contacts: Contacts.contacts
+          contacts: contacts()
         },
         dataType: "json",
         success: function() {
@@ -27098,6 +27101,12 @@ var jsUri = Uri;
         error: function(jqXHR, textStatus, errorThrown) {
           return alert(errorThrown);
         }
+      });
+    };
+
+    Contacts.find_contacts_by_id = function(ids) {
+      return ids.map(function(id) {
+        return indexed_contact_list()[id];
       });
     };
 
@@ -27987,7 +27996,8 @@ getUrlParam = function(url,name) {
     return $("#invite").bind("pageshow", function(event) {
       $("#invite .current_occasion").html(current_occasion().name);
       $("#invite .auto_complete_picked_items_box").html("");
-      return $("#invite .help").show();
+      $("#invite .help").show();
+      return $("#invite .auto_complete_search_input_field").attr("placeholder", "Type a name");
     });
   });
 
@@ -28095,10 +28105,28 @@ getUrlParam = function(url,name) {
     return current_occasion().name;
   };
 
-  this.find_contacts_by_id = function(ids) {
-    return ids.map(function(id) {
-      return indexed_contact_list()[id];
-    });
+  this.contacts = function() {
+    return appState.get("contacts");
+  };
+
+  this.set_contacts = function(obj) {
+    return appState.set("contacts", obj);
+  };
+
+  this.clear_contacts = function() {
+    return appState.clear("contacts");
+  };
+
+  this.contacts_directory = function() {
+    return appState.get("contacts_directory");
+  };
+
+  this.set_contacts_directory = function(obj) {
+    return appState.set("contacts_directory", obj);
+  };
+
+  this.clear_contacts_directory = function() {
+    return appState.clear("contacts_directory");
   };
 
   this.invitees = function() {
