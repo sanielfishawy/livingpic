@@ -27120,6 +27120,7 @@ var jsUri = Uri;
 (function() {
 
   window.DB = (function() {
+    var _this = this;
 
     function DB() {}
 
@@ -27127,11 +27128,80 @@ var jsUri = Uri;
 
     DB.value = "a";
 
-    DB.db = window.openDatabase != null ? window.openDatabase("Database", "1.0", "App DB", 20000000) : null;
+    DB.db = null;
+
+    DB.insure_db = function() {
+      if (DB.db == null) {
+        return DB.db = window.openDatabase("Database", "1.0", "App DB", 20000000);
+      }
+    };
+
+    DB.insure_key_value_table = function() {
+      return DB.db.transaction(DB.insure_key_value_table, DB.success_cb, DB.error_cb);
+    };
+
+    DB.insure_key_value_table_sql = function(tx) {
+      return tx.executeSql('CREATE TABLE IF NOT EXISTS key_value (key unique, value)');
+    };
+
+    DB.success_cb = function() {
+      return console.log("db tx success");
+    };
+
+    DB.error_cb = function(e) {
+      return console.log("db tx error: " + e);
+    };
+
+    DB.query_result_cb = function(tx, results) {
+      console.log(tx);
+      return console.log(results);
+    };
+
+    DB.tdbs = {
+      mk_str: function(size) {
+        var n, str, _i;
+        str = "";
+        for (n = _i = 0; 0 <= size ? _i <= size : _i >= size; n = 0 <= size ? ++_i : --_i) {
+          str += "a";
+        }
+        return DB.value = str;
+      },
+      test: function(size) {
+        mk_str(size);
+        DB.set(DB.key, DB.value);
+        return DB.get(DB.key).length;
+      }
+    };
+
+    DB.set_sql = function(tx) {
+      DB.insure_key_value_table_sql();
+      tx.executeSql("DELETE FROM key_value WHERE key = " + DB.key);
+      return tx.executeSql("INSERT INTO key_value (key, value) VALUES (" + DB.key + ", " + DB.value + ")");
+    };
+
+    DB.set = function(key, val) {
+      return DB.db.transaction(DB.set_sql, DB.success_cb, DB.error_cb);
+    };
+
+    DB.get = function(key) {
+      return DB.db.transaction(DB.get_sql, DB.error_cb);
+    };
+
+    DB.get_sql = function(tx) {
+      return tx.executeSql("SELECT * FROM key_value WHERE key = " + DB.key + ", [], query_success_cb, error_cb");
+    };
+
+    DB.clear = function(key) {
+      return localStorage.removeItem(key);
+    };
+
+    DB.clear_all = function() {
+      return localStorage.clear();
+    };
 
     return DB;
 
-  })();
+  }).call(this);
 
 }).call(this);
 (function() {
