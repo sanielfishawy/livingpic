@@ -27104,15 +27104,28 @@ var jsUri = Uri;
       });
     };
 
-    Contacts.find_contacts_by_id = function(ids) {
-      return ids.map(function(id) {
-        return indexed_contact_list()[id];
-      });
+    Contacts.find_contacts_by_ids = function(ids) {
+      if (Config.is_running_in_browser()) {
+        return ids.map(function(id) {
+          return contacts_directory()[id];
+        });
+      }
     };
 
     return Contacts;
 
   }).call(this);
+
+}).call(this);
+(function() {
+
+  window.DB = (function() {
+
+    function DB() {}
+
+    return DB;
+
+  })();
 
 }).call(this);
 (function() {
@@ -28021,6 +28034,7 @@ getUrlParam = function(url,name) {
 
 }).call(this);
 (function() {
+  var _this = this;
 
   window.appState = (function() {
 
@@ -28056,6 +28070,22 @@ getUrlParam = function(url,name) {
     return appState;
 
   })();
+
+  this.tls = {
+    mk_str: function(size) {
+      var n, str, _i;
+      str = "";
+      for (n = _i = 0; 0 <= size ? _i <= size : _i >= size; n = 0 <= size ? ++_i : --_i) {
+        str += "a";
+      }
+      return str;
+    },
+    test: function(size) {
+      localStorage.clear();
+      localStorage.test = tls.mk_str(size);
+      return localStorage.test.length;
+    }
+  };
 
   this.current_user = function() {
     return appState.get("current_user");
