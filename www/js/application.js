@@ -27138,13 +27138,13 @@ var jsUri = Uri;
       return tx.executeSql('CREATE TABLE IF NOT EXISTS key_value (key unique, value)');
     };
 
-    KvDb.success_cb(function() {
+    KvDb.success_cb = function() {
       return console.log("db tx success");
-    });
+    };
 
-    KvDb.error_cb(function(e) {
+    KvDb.error_cb = function(e) {
       return console.log("db tx error: " + e);
-    });
+    };
 
     KvDb.tdbs = {
       mk_str: function(size) {
@@ -27162,11 +27162,11 @@ var jsUri = Uri;
       }
     };
 
-    KvDb.set_sql(function(tx) {
+    KvDb.set_sql = function(tx) {
       KvDb.insure_key_value_table_sql();
       tx.executeSql("DELETE FROM key_value WHERE key = " + KvDb.key);
       return tx.executeSql("INSERT INTO key_value (key, value) VALUES (" + KvDb.key + ", " + KvDb.value + ")");
-    });
+    };
 
     KvDb.set = function(key, val) {
       return this.db.transaction(this.set_sql, this.success_cb, this.error_cb);
