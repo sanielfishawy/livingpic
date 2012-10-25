@@ -27119,79 +27119,81 @@ var jsUri = Uri;
 }).call(this);
 (function() {
 
-  window.KvDb = (function() {
+  window.DB = (function() {
     var _this = this;
 
-    function KvDb() {}
+    function DB() {}
 
-    KvDb.key = "test_key";
+    DB.key = "test_key";
 
-    KvDb.value = "a";
+    DB.value = "a";
 
-    KvDb.db = window.openDatabase != null ? window.openDatabase("Database", "1.0", "App DB", 20000000) : null;
+    DB.db = window.openDatabase != null ? window.openDatabase("Database", "1.0", "App DB", 20000000) : null;
 
-    KvDb.insure_key_value_table = function() {
-      return KvDb.db.transaction(KvDb.insure_key_value_table, KvDb.success_cb, KvDb.error_cb);
+    DB.insure_key_value_table = function() {
+      return DB.db.transaction(DB.insure_key_value_table, DB.success_cb, DB.error_cb);
     };
 
-    KvDb.insure_key_value_table_sql = function(tx) {
+    DB.insure_key_value_table_sql = function(tx) {
       return tx.executeSql('CREATE TABLE IF NOT EXISTS key_value (key unique, value)');
     };
 
-    KvDb.success_cb = function() {
+    DB.success_cb = function() {
       return console.log("db tx success");
     };
 
-    KvDb.error_cb = function(e) {
+    DB.error_cb = function(e) {
       return console.log("db tx error: " + e);
     };
 
-    KvDb.tdbs = {
+    DB.query_result_cb = function(tx, results) {
+      console.log(tx);
+      return console.log(results);
+    };
+
+    DB.tdbs = {
       mk_str: function(size) {
         var n, str, _i;
         str = "";
         for (n = _i = 0; 0 <= size ? _i <= size : _i >= size; n = 0 <= size ? ++_i : --_i) {
           str += "a";
         }
-        return KvDb.value = str;
+        return DB.value = str;
       },
       test: function(size) {
         mk_str(size);
-        KvDb.set(KvDb.key, KvDb.value);
-        return KvDb.get(KvDb.key).length;
+        DB.set(DB.key, DB.value);
+        return DB.get(DB.key).length;
       }
     };
 
-    KvDb.set_sql = function(tx) {
-      KvDb.insure_key_value_table_sql();
-      tx.executeSql("DELETE FROM key_value WHERE key = " + KvDb.key);
-      return tx.executeSql("INSERT INTO key_value (key, value) VALUES (" + KvDb.key + ", " + KvDb.value + ")");
+    DB.set_sql = function(tx) {
+      DB.insure_key_value_table_sql();
+      tx.executeSql("DELETE FROM key_value WHERE key = " + DB.key);
+      return tx.executeSql("INSERT INTO key_value (key, value) VALUES (" + DB.key + ", " + DB.value + ")");
     };
 
-    KvDb.set = function(key, val) {
-      return this.db.transaction(this.set_sql, this.success_cb, this.error_cb);
+    DB.set = function(key, val) {
+      return DB.db.transaction(DB.set_sql, DB.success_cb, DB.error_cb);
     };
 
-    KvDb.get = function(key) {
-      var result;
-      result = false;
-      try {
-        result = localStorage[key] != null ? JSON.parse(localStorage[key]) : false;
-      } catch (error) {
-        console.log(error);
-      }
-      return result;
+    DB.get = function(key) {
+      return DB.db.transaction(DB.get_sql, DB.error_cb);
     };
 
-    KvDb.clear = function(key) {
+    DB.get_sql = function(tx) {
+      return tx.executeSql("SELECT * FROM key_value WHERE key = " + DB.key + ", [], query_success_cb, error_cb");
+    };
+
+    DB.clear = function(key) {
       return localStorage.removeItem(key);
     };
 
-    KvDb.clear_all = function() {
+    DB.clear_all = function() {
       return localStorage.clear();
     };
 
-    return KvDb;
+    return DB;
 
   }).call(this);
 
