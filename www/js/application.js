@@ -27119,13 +27119,81 @@ var jsUri = Uri;
 }).call(this);
 (function() {
 
-  window.DB = (function() {
+  window.KvDb = (function() {
+    var _this = this;
 
-    function DB() {}
+    function KvDb() {}
 
-    return DB;
+    KvDb.key = "test_key";
 
-  })();
+    KvDb.value = "a";
+
+    KvDb.db = window.openDatabase != null ? window.openDatabase("Database", "1.0", "App DB", 20000000) : null;
+
+    KvDb.insure_key_value_table = function() {
+      return KvDb.db.transaction(KvDb.insure_key_value_table, KvDb.success_cb, KvDb.error_cb);
+    };
+
+    KvDb.insure_key_value_table_sql = function(tx) {
+      return tx.executeSql('CREATE TABLE IF NOT EXISTS key_value (key unique, value)');
+    };
+
+    KvDb.success_cb(function() {
+      return console.log("db tx success");
+    });
+
+    KvDb.error_cb(function(e) {
+      return console.log("db tx error: " + e);
+    });
+
+    KvDb.tdbs = {
+      mk_str: function(size) {
+        var n, str, _i;
+        str = "";
+        for (n = _i = 0; 0 <= size ? _i <= size : _i >= size; n = 0 <= size ? ++_i : --_i) {
+          str += "a";
+        }
+        return KvDb.value = str;
+      },
+      test: function(size) {
+        mk_str(size);
+        KvDb.set(KvDb.key, KvDb.value);
+        return KvDb.get(KvDb.key).length;
+      }
+    };
+
+    KvDb.set_sql(function(tx) {
+      KvDb.insure_key_value_table_sql();
+      tx.executeSql("DELETE FROM key_value WHERE key = " + KvDb.key);
+      return tx.executeSql("INSERT INTO key_value (key, value) VALUES (" + KvDb.key + ", " + KvDb.value + ")");
+    });
+
+    KvDb.set = function(key, val) {
+      return this.db.transaction(this.set_sql, this.success_cb, this.error_cb);
+    };
+
+    KvDb.get = function(key) {
+      var result;
+      result = false;
+      try {
+        result = localStorage[key] != null ? JSON.parse(localStorage[key]) : false;
+      } catch (error) {
+        console.log(error);
+      }
+      return result;
+    };
+
+    KvDb.clear = function(key) {
+      return localStorage.removeItem(key);
+    };
+
+    KvDb.clear_all = function() {
+      return localStorage.clear();
+    };
+
+    return KvDb;
+
+  }).call(this);
 
 }).call(this);
 (function() {
@@ -28034,9 +28102,9 @@ getUrlParam = function(url,name) {
 
 }).call(this);
 (function() {
-  var _this = this;
 
   window.appState = (function() {
+    var _this = this;
 
     function appState() {}
 
@@ -28067,25 +28135,25 @@ getUrlParam = function(url,name) {
       return localStorage.clear();
     };
 
+    appState.tls = {
+      mk_str: function(size) {
+        var n, str, _i;
+        str = "";
+        for (n = _i = 0; 0 <= size ? _i <= size : _i >= size; n = 0 <= size ? ++_i : --_i) {
+          str += "a";
+        }
+        return str;
+      },
+      test: function(size) {
+        localStorage.clear();
+        localStorage.test = appState.tls.mk_str(size);
+        return localStorage.test.length;
+      }
+    };
+
     return appState;
 
-  })();
-
-  this.tls = {
-    mk_str: function(size) {
-      var n, str, _i;
-      str = "";
-      for (n = _i = 0; 0 <= size ? _i <= size : _i >= size; n = 0 <= size ? ++_i : --_i) {
-        str += "a";
-      }
-      return str;
-    },
-    test: function(size) {
-      localStorage.clear();
-      localStorage.test = tls.mk_str(size);
-      return localStorage.test.length;
-    }
-  };
+  }).call(this);
 
   this.current_user = function() {
     return appState.get("current_user");
