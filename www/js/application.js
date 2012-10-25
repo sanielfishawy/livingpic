@@ -27137,7 +27137,7 @@ var jsUri = Uri;
     };
 
     DB.insure_key_value_table = function() {
-      return DB.db.transaction(DB.insure_key_value_table, DB.success_cb, DB.error_cb);
+      return DB.db.transaction(DB.insure_key_value_table_sql, DB.success_cb, DB.error_cb);
     };
 
     DB.insure_key_value_table_sql = function(tx) {
