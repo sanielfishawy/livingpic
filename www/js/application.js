@@ -27142,7 +27142,7 @@ var jsUri = Uri;
 
     DB.ensure_key_value_table_sql = function(tx) {
       tx.executeSql('DROP TABLE IF EXISTS DEMO');
-      return tx.executeSql('CREATE TABLE IF NOT EXISTS DEMO (id unique, data)');
+      return tx.executeSql('CREATE TABLE IF NOT EXISTS fuck (id unique, data)');
     };
 
     DB.success_cb = function() {
