@@ -27130,19 +27130,19 @@ var jsUri = Uri;
 
     DB.db = null;
 
-    DB.insure_db = function() {
+    DB.ensure_db = function() {
       if (DB.db == null) {
         return DB.db = window.openDatabase("Database", "1.0", "App DB", 20000000);
       }
     };
 
-    DB.insure_key_value_table = function() {
-      return DB.db.transaction(DB.insure_key_value_table_sql, DB.success_cb, DB.error_cb);
+    DB.ensure_key_value_table = function() {
+      return DB.db.transaction(DB.ensure_key_value_table_sql, DB.success_cb, DB.error_cb);
     };
 
-    DB.insure_key_value_table_sql = function(tx) {
+    DB.ensure_key_value_table_sql = function(tx) {
       tx.executeSql('DROP TABLE IF EXISTS DEMO');
-      return tx.executeSql('CREATE TABLE IF NOT EXISTS key_value (mykey unique, myvalue)');
+      return tx.executeSql('CREATE TABLE IF NOT EXISTS DEMO (id unique, data)');
     };
 
     DB.success_cb = function() {
@@ -27175,7 +27175,7 @@ var jsUri = Uri;
     };
 
     DB.set_sql = function(tx) {
-      DB.insure_key_value_table();
+      DB.ensure_key_value_table();
       tx.executeSql("DELETE FROM key_value WHERE key = " + DB.key);
       return tx.executeSql("INSERT INTO key_value (key, value) VALUES (" + DB.key + ", " + DB.value + ")");
     };
