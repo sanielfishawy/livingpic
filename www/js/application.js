@@ -27141,7 +27141,7 @@ var jsUri = Uri;
     };
 
     DB.insure_key_value_table_sql = function(tx) {
-      return tx.executeSql('CREATE TABLE IF NOT EXISTS key_value (key unique, value)');
+      return tx.executeSql('CREATE TABLE IF NOT EXISTS key_value (mykey unique, myvalue)');
     };
 
     DB.success_cb = function() {
