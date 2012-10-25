@@ -27127,6 +27127,8 @@ var jsUri = Uri;
 
     DB.value = "a";
 
+    DB.db = window.openDatabase != null ? window.openDatabase("Database", "1.0", "App DB", 20000000) : null;
+
     return DB;
 
   })();
