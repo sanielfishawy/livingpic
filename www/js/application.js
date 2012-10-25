@@ -27174,7 +27174,7 @@ var jsUri = Uri;
     };
 
     DB.set_sql = function(tx) {
-      DB.insure_key_value_table_sql();
+      DB.insure_key_value_table();
       tx.executeSql("DELETE FROM key_value WHERE key = " + DB.key);
       return tx.executeSql("INSERT INTO key_value (key, value) VALUES (" + DB.key + ", " + DB.value + ")");
     };
