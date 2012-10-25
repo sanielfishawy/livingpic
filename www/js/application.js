@@ -27141,6 +27141,7 @@ var jsUri = Uri;
     };
 
     DB.insure_key_value_table_sql = function(tx) {
+      tx.executeSql('DROP TABLE IF EXISTS DEMO');
       return tx.executeSql('CREATE TABLE IF NOT EXISTS key_value (mykey unique, myvalue)');
     };
 
@@ -27149,7 +27150,7 @@ var jsUri = Uri;
     };
 
     DB.error_cb = function(e) {
-      return console.log("db tx error: " + e);
+      return console.log("db tx error: " + e.code);
     };
 
     DB.query_result_cb = function(tx, results) {
@@ -28497,14 +28498,14 @@ function populateDB(tx) {
 }
 
 function errorCB(err) {
-    alert("Error processing SQL: "+err.code);
+    console.log("Error processing SQL: "+err);
 }
 
 function successCB() {
-    alert("success!");
+    console.log("success!");
 }
 
-// var db = window.openDatabase("Database", "1.0", "Cordova Demo", 200000);
+// var db = window.openDatabase("Database", "1.0", "Cordova Demo", 20000000);
 // db.transaction(populateDB, errorCB, successCB);
 (function() {
 
