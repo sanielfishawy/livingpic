@@ -27151,12 +27151,18 @@ var jsUri = Uri;
     };
 
     DB.error_cb = function(e) {
-      return console.log("db tx error: " + e.code);
+      console.log("error_cb:");
+      return console.log(e);
     };
 
     DB.query_result_cb = function(tx, results) {
       console.log(tx);
       return console.log(results);
+    };
+
+    DB.query_error_cb = function(e) {
+      console.log("query_error_cb:");
+      return console.log(e);
     };
 
     DB.tdbs = {
@@ -27189,7 +27195,7 @@ var jsUri = Uri;
     };
 
     DB.get_sql = function(tx) {
-      return tx.executeSql("SELECT * FROM key_value", [], DB.query_result_cb, DB.error_cb);
+      return tx.executeSql("SELECT * FROM key_value", [], DB.query_result_cb, DB.query_error_cb);
     };
 
     DB.clear = function(key) {};
