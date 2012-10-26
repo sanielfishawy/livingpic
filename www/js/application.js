@@ -28510,7 +28510,7 @@ function queryDB(tx) {
     tx.executeSql('SELECT * FROM DEMO', [], querySuccess, errorCB);
 }
 
-var qresults = null;
+window.qresults = null;
 
 function querySuccess(tx, results) {
   console.log("Returned rows = " + results.rows.length);
@@ -28522,7 +28522,7 @@ function querySuccess(tx, results) {
   }
   // for an insert statement, this property will return the ID of the last inserted row
   console.log("Last inserted row ID = " + results.insertId);
-  qresults = results
+  window.qresults = results
 }
 
 
