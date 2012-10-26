@@ -27142,7 +27142,8 @@ var jsUri = Uri;
     };
 
     DB.ensure_key_value_table_sql = function(tx) {
-      return tx.executeSql('CREATE TABLE IF NOT EXISTS key_value (key unique, value)');
+      tx.executeSql('DROP TABLE IF EXISTS key_value');
+      return tx.executeSql('CREATE TABLE IF NOT EXISTS key_value (id, data)');
     };
 
     DB.success_cb = function() {
@@ -27180,10 +27181,7 @@ var jsUri = Uri;
     };
 
     DB.set_sql = function(tx) {
-      console.log("DELETE FROM key_value WHERE key = " + DB.key);
-      console.log("INSERT INTO key_value (key, value) VALUES (" + DB.key + ", " + DB.value + ")");
-      tx.executeSql("DELETE FROM key_value WHERE key = " + DB.key);
-      return tx.executeSql("INSERT INTO key_value (key, value) VALUES (" + DB.key + ", " + DB.value + ")");
+      return tx.executeSql('INSERT INTO key_value (id, data) VALUES (1, "test")');
     };
 
     DB.get = function(key) {
