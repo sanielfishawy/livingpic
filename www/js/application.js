@@ -27190,7 +27190,7 @@ var jsUri = Uri;
     };
 
     DB.get_sql = function(tx) {
-      return tx.executeSql("SELECT * FROM key_value WHERE key = " + DB.key + ", [], query_success_cb, error_cb");
+      return tx.executeSql("SELECT * FROM key_value WHERE key = " + DB.key + ", [], DB.query_result_cb, DB.error_cb");
     };
 
     DB.clear = function(key) {};
