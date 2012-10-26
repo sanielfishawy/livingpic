@@ -28515,6 +28515,7 @@ window.qresults = null;
 function querySuccess(tx, results) {
   console.log("Returned rows = " + results.rows.length);
   console.log(results.rows);
+  console.log(results.rows.item(0))
   // this will be true since it was a select statement and so rowsAffected was 0
   if (!resultSet.rowsAffected) {
     console.log('No rows affected!');
