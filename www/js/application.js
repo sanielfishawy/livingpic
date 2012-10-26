@@ -27164,6 +27164,7 @@ var jsUri = Uri;
       console.log(results.rows);
       console.log("Item0:");
       console.log(results.rows.item(0));
+      console.log(results.rows.item(0).value.length);
       console.log("resultSet");
       console.log(resultSet);
       return false;
