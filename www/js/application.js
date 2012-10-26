@@ -28500,6 +28500,12 @@ function populateDB(tx) {
 
 function errorCB(err) {
     console.log("Error processing SQL: "+err);
+    console.log err
+}
+
+function queryErrorCB(err) {
+    console.log("queryErrorCB: "+err);
+    console.log err
 }
 
 function successCB() {
@@ -28507,7 +28513,7 @@ function successCB() {
 }
 
 function queryDB(tx) {
-    tx.executeSql('SELECT * FROM DEMO', [], querySuccess, errorCB);
+    tx.executeSql('SELECT * FROM DEMO', [], querySuccess, queryErrorCB);
 }
 
 window.qresults = null;
@@ -28515,7 +28521,7 @@ window.qresults = null;
 function querySuccess(tx, results) {
   console.log("Returned rows = " + results.rows.length);
   console.log(results.rows);
-  console.log(results.rows.item(0))
+  console.log(results.rows.item(0));
   // this will be true since it was a select statement and so rowsAffected was 0
   if (!resultSet.rowsAffected) {
     console.log('No rows affected!');
