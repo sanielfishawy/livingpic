@@ -27132,7 +27132,7 @@ var jsUri = Uri;
 
     DB.ensure_db = function() {
       if (DB.db == null) {
-        return DB.db = window.openDatabase("Database", "1.0", "App DB", 20000000);
+        return DB.db = window.openDatabase("Database", "1.0", "App DB", 200000);
       }
     };
 
@@ -27142,7 +27142,6 @@ var jsUri = Uri;
     };
 
     DB.ensure_key_value_table_sql = function(tx) {
-      tx.executeSql('DROP TABLE IF EXISTS key_value');
       return tx.executeSql('CREATE TABLE IF NOT EXISTS key_value (id, data)');
     };
 
@@ -28507,8 +28506,26 @@ function successCB() {
     console.log("success!");
 }
 
+function queryDB(tx) {
+    tx.executeSql('SELECT * FROM DEMO', [], querySuccess, errorCB);
+}
+
+function querySuccess(tx, results) {
+  console.log("Returned rows = " + results.rows.length);
+  console.log(results);
+  // this will be true since it was a select statement and so rowsAffected was 0
+  if (!resultSet.rowsAffected) {
+    console.log('No rows affected!');
+    return false;
+  }
+  // for an insert statement, this property will return the ID of the last inserted row
+  console.log("Last inserted row ID = " + results.insertId);
+}
+
+
 // var db = window.openDatabase("Database", "1.0", "Cordova Demo", 20000000);
 // db.transaction(populateDB, errorCB, successCB);
+// db.transaction(queryDB, errorCB);
 (function() {
 
   $(document).ready(function() {
