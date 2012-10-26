@@ -27185,12 +27185,11 @@ var jsUri = Uri;
     };
 
     DB.get = function(key) {
-      DB.ensure_key_value_table();
       return DB.db.transaction(DB.get_sql, DB.error_cb);
     };
 
     DB.get_sql = function(tx) {
-      return tx.executeSql("SELECT * FROM key_value WHERE key = " + DB.key + ", [], DB.query_result_cb, DB.error_cb");
+      return tx.executeSql("SELECT * FROM key_value", [], DB.query_result_cb, DB.error_cb);
     };
 
     DB.clear = function(key) {};
