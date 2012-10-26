@@ -27153,7 +27153,8 @@ var jsUri = Uri;
 
     DB.error_cb = function(e) {
       console.log("error_cb:");
-      return console.log(e);
+      console.log(e);
+      return false;
     };
 
     DB.query_result_cb = function(tx, results) {
@@ -27163,7 +27164,8 @@ var jsUri = Uri;
       console.log("Item0:");
       console.log(results.rows.item(0));
       console.log("resultSet");
-      return console.log(resultSet);
+      console.log(resultSet);
+      return false;
     };
 
     DB.query_error_cb = function(e) {
@@ -27200,7 +27202,7 @@ var jsUri = Uri;
     };
 
     DB.get_sql = function(tx) {
-      return tx.executeSql("SELECT * FROM key_value", [], DB.query_result_cb, DB.query_error_cb);
+      return tx.executeSql('SELECT * FROM key_value WHERE id = "key1"', [], DB.query_result_cb, DB.query_error_cb);
     };
 
     DB.clear = function(key) {};
