@@ -27035,18 +27035,21 @@ var jsUri = Uri;
     Contacts.handle_list_from_device = function(cntcts) {
       var cd;
       console.log("Successfully found " + cntcts.length + " contacts");
+      cntcts = cntcts.filter(function(c) {
+        return c.displayName != null;
+      });
       cd = {};
-      cntcts.filter(function(c) {
-        return c.fullname != null;
-      }).map(function(c) {
-        return cd[c.id] = c;
+      cntcts.map(function(c) {
+        return cd[c.id] = {
+          displayName: c.displayName,
+          name: c.name,
+          emails: c.emails,
+          phoneNumbers: c.phoneNumbers
+        };
       });
       set_contacts_directory(cd);
-      console.log(cntcts[1000]);
-      console.log(cd);
-      set_contacts(cntcts.filter(function(c) {
-        return c.displayName != null;
-      }).sort(function(a, b) {
+      console.log(cd[1004]);
+      set_contacts(cntcts.sort(function(a, b) {
         return $.trim(a.displayName.toLowerCase) < $.trim(b.displayName.toLowerCase);
       }).map(function(c) {
         return {
