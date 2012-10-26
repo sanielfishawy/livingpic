@@ -26884,7 +26884,7 @@ var jsUri = Uri;
   this.Boot = {
     initialize: function() {
       Contacts.prefetch({
-        fresh: true
+        fresh: false
       });
       new HostHandler;
       return $.mobile.changePage("#admin");
