@@ -27141,11 +27141,12 @@ var jsUri = Uri;
     };
 
     DB.ensure_key_value_table_sql = function(tx) {
+      var sql;
       tx.executeSql('DROP TABLE IF EXISTS key_value');
       tx.executeSql('CREATE TABLE IF NOT EXISTS key_value (key,     value)');
-      tx.executeSql('INSERT INTO key_value (key, value) VALUES ("key1", "test1")');
-      tx.executeSql('DELETE FROM key_value WHERE key = "key1"');
-      return tx.executeSql('INSERT INTO key_value (key, value) VALUES ("key1", "test1")');
+      sql = "INSERT INTO key_value (key, value) VALUES ('key1', '" + DB.value + "' )";
+      console.log(sql);
+      return tx.executeSql(sql);
     };
 
     DB.success_cb = function() {
