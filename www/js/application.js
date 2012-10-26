@@ -27120,7 +27120,6 @@ var jsUri = Uri;
 (function() {
 
   window.DB = (function() {
-    var _this = this;
 
     function DB() {}
 
@@ -27175,20 +27174,13 @@ var jsUri = Uri;
       return console.log(e);
     };
 
-    DB.tdbs = {
-      mk_str: function(size) {
-        var n, str, _i;
-        str = "";
-        for (n = _i = 0; 0 <= size ? _i <= size : _i >= size; n = 0 <= size ? ++_i : --_i) {
-          str += "a";
-        }
-        return DB.value = str;
-      },
-      test: function(size) {
-        mk_str(size);
-        DB.set(DB.key, DB.value);
-        return DB.get(DB.key).length;
+    DB.mk_str = function(size) {
+      var n, str, _i;
+      str = "";
+      for (n = _i = 0; 0 <= size ? _i <= size : _i >= size; n = 0 <= size ? ++_i : --_i) {
+        str += "a";
       }
+      return DB.value = str;
     };
 
     DB.set = function(key, val) {
