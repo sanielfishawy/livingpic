@@ -27143,8 +27143,9 @@ var jsUri = Uri;
 
     DB.ensure_key_value_table_sql = function(tx) {
       tx.executeSql('DROP TABLE IF EXISTS key_value');
-      tx.executeSql('CREATE TABLE IF NOT EXISTS key_value (id, data)');
-      return tx.executeSql('INSERT INTO key_value (id, data) VALUES ("key1", "test1")');
+      tx.executeSql('CREATE TABLE IF NOT EXISTS key_value (key,     value)');
+      tx.executeSql('INSERT INTO key_value (key, value) VALUES ("key1", "test1")');
+      return tx.executeSql('DELETE FROM key_value WHERE key = "key1"');
     };
 
     DB.success_cb = function() {
@@ -27194,7 +27195,7 @@ var jsUri = Uri;
     };
 
     DB.set_sql = function(tx) {
-      return tx.executeSql('INSERT INTO key_value (id, data) VALUES (1, "test")');
+      return tx.executeSql('INSERT INTO key_value (key, value) VALUES (1, "test")');
     };
 
     DB.get = function(key) {
@@ -27202,7 +27203,7 @@ var jsUri = Uri;
     };
 
     DB.get_sql = function(tx) {
-      return tx.executeSql('SELECT * FROM key_value WHERE id = "key1"', [], DB.query_result_cb, DB.query_error_cb);
+      return tx.executeSql('SELECT * FROM key_value WHERE key = "key1"', [], DB.query_result_cb, DB.query_error_cb);
     };
 
     DB.clear = function(key) {};
