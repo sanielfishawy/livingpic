@@ -26884,7 +26884,7 @@ var jsUri = Uri;
   this.Boot = {
     initialize: function() {
       Contacts.prefetch({
-        fresh: false
+        fresh: true
       });
       new HostHandler;
       return $.mobile.changePage("#admin");
@@ -27035,7 +27035,15 @@ var jsUri = Uri;
     };
 
     Contacts.handle_list_from_device = function(cntcts) {
+      var cd;
       console.log("Successfully found " + cntcts.length + " contacts");
+      cd = {};
+      cntcts.filter(function(c) {
+        return c.fullname != null;
+      }).map(function(c) {
+        return cd[c.id] = c;
+      });
+      set_contacts_directory(cd);
       set_contacts(cntcts.filter(function(c) {
         return c.displayName != null;
       }).sort(function(a, b) {
@@ -27105,11 +27113,9 @@ var jsUri = Uri;
     };
 
     Contacts.find_contacts_by_ids = function(ids) {
-      if (Config.is_running_in_browser()) {
-        return ids.map(function(id) {
-          return contacts_directory()[id];
-        });
-      }
+      return ids.map(function(id) {
+        return contacts_directory()[id];
+      });
     };
 
     return Contacts;
@@ -28132,7 +28138,7 @@ getUrlParam = function(url,name) {
       try {
         return localStorage[key] = JSON.stringify(obj);
       } catch (error) {
-        return console.log("Could not set appState for " + key + " because of " + error);
+        return alert("Could not set appState for " + key + " because of " + error);
       }
     };
 
@@ -28142,7 +28148,7 @@ getUrlParam = function(url,name) {
       try {
         result = localStorage[key] != null ? JSON.parse(localStorage[key]) : false;
       } catch (error) {
-        console.log(error);
+        alert(error);
       }
       return result;
     };
@@ -28191,7 +28197,7 @@ getUrlParam = function(url,name) {
     return current_user() && current_user().id;
   };
 
-  window.current_user_fullname = function() {
+  this.current_user_fullname = function() {
     return "" + (current_user().first_name ? current_user().first_name : void 0) + " " + (current_user().last_name ? current_user().last_name : void 0);
   };
 
@@ -28275,7 +28281,7 @@ getUrlParam = function(url,name) {
     });
   };
 
-  window.display_app_state = function() {
+  this.display_app_state = function() {
     return "Current_user: " + (current_user_id()) + " | Registered: " + (registered());
   };
 
@@ -28501,59 +28507,6 @@ getUrlParam = function(url,name) {
   };
 
 }).call(this);
-function populateDB(tx) {
-     tx.executeSql('DROP TABLE IF EXISTS DEMO');
-     tx.executeSql('CREATE TABLE IF NOT EXISTS DEMO (id unique, data)');
-     tx.executeSql('INSERT INTO DEMO (id, data) VALUES (1, "First row")');
-     tx.executeSql('INSERT INTO DEMO (id, data) VALUES (2, "Second row")');
-}
-
-function errorCB(err) {
-    console.log("Error processing SQL: "+err);
-    console.log(err)
-}
-
-function queryErrorCB(err) {
-    console.log("queryErrorCB: "+err);
-    console.log(err)
-}
-
-function successCB() {
-    console.log("success!");
-}
-
-function queryDB(tx) {
-    tx.executeSql('SELECT * FROM DEMO', [], querySuccess, queryErrorCB);
-}
-
-function queryDB2(tx) {
-    tx.executeSql('SELECT * FROM key_value', [], querySuccess, queryErrorCB);
-}
-
-
-function querySuccess(tx, results) {
-  console.log("Returned rows = " + results.rows.length);
-  console.log("Rows:")
-  console.log(results.rows);
-  console.log("Item0:")
-  console.log(results.rows.item(0));
-  console.log("resultSet")
-  console.log(resultSet)
-  // this will be true since it was a select statement and so rowsAffected was 0
-  if (!resultSet.rowsAffected) {
-    console.log('No rows affected!');
-    return false;
-  }
-  // for an insert statement, this property will return the ID of the last inserted row
-  console.log("Last inserted row ID = " + results.insertId);
-  return false
-}
-
-
-// var db = window.openDatabase("Database", "1.0", "Cordova Demo", 200000);
-// db.transaction(populateDB, errorCB, successCB);
-// db.transaction(queryDB, errorCB);
-// DB.db.transaction(queryDB2, errorCB);
 (function() {
 
   $(document).ready(function() {
