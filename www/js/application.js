@@ -27027,7 +27027,7 @@ var jsUri = Uri;
 
     Contacts.get_list_from_device = function(callback) {
       Contacts.device_call_back = callback;
-      return navigator.contacts.find(["displayName", "name"], Contacts.handle_list_from_device, Contacts.get_list_error, {
+      return navigator.contacts.find(["displayName", "name", "phoneNumbers", "emails"], Contacts.handle_list_from_device, Contacts.get_list_error, {
         multiple: true
       });
     };
@@ -27042,6 +27042,8 @@ var jsUri = Uri;
         return cd[c.id] = c;
       });
       set_contacts_directory(cd);
+      console.log(cntcts[1000]);
+      console.log(cd);
       set_contacts(cntcts.filter(function(c) {
         return c.displayName != null;
       }).sort(function(a, b) {
