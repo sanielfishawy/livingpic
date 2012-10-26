@@ -27180,7 +27180,8 @@ var jsUri = Uri;
       for (n = _i = 0; 0 <= size ? _i <= size : _i >= size; n = 0 <= size ? ++_i : --_i) {
         str += "a";
       }
-      return DB.value = str;
+      DB.value = str;
+      return DB.value.length;
     };
 
     DB.set = function(key, val) {
