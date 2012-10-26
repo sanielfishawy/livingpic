@@ -28516,6 +28516,10 @@ function queryDB(tx) {
     tx.executeSql('SELECT * FROM DEMO', [], querySuccess, queryErrorCB);
 }
 
+function queryDB2(tx) {
+    tx.executeSql('SELECT * FROM key_value', [], querySuccess, queryErrorCB);
+}
+
 
 function querySuccess(tx, results) {
   console.log("Returned rows = " + results.rows.length);
