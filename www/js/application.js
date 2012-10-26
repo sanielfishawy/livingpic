@@ -26884,6 +26884,9 @@ var jsUri = Uri;
 
   this.Boot = {
     initialize: function() {
+      Contacts.prefetch({
+        fresh: false
+      });
       new HostHandler;
       return $.mobile.changePage("#admin");
     }
@@ -27048,7 +27051,6 @@ var jsUri = Uri;
         };
       });
       set_contacts_directory(cd);
-      console.log(cd[1004]);
       set_contacts(cntcts.sort(function(a, b) {
         return $.trim(a.displayName.toLowerCase) < $.trim(b.displayName.toLowerCase);
       }).map(function(c) {
