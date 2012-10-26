@@ -27157,8 +27157,13 @@ var jsUri = Uri;
     };
 
     DB.query_result_cb = function(tx, results) {
-      console.log(tx);
-      return console.log(results);
+      console.log("Returned rows = " + results.rows.length);
+      console.log("Rows:");
+      console.log(results.rows);
+      console.log("Item0:");
+      console.log(results.rows.item(0));
+      console.log("resultSet");
+      return console.log(resultSet);
     };
 
     DB.query_error_cb = function(e) {
@@ -28544,7 +28549,7 @@ function querySuccess(tx, results) {
 // var db = window.openDatabase("Database", "1.0", "Cordova Demo", 200000);
 // db.transaction(populateDB, errorCB, successCB);
 // db.transaction(queryDB, errorCB);
-// db.transaction(queryDB2, errorCB);
+// DB.db.transaction(queryDB2, errorCB);
 (function() {
 
   $(document).ready(function() {
