@@ -28500,12 +28500,12 @@ function populateDB(tx) {
 
 function errorCB(err) {
     console.log("Error processing SQL: "+err);
-    console.log err
+    console.log(err)
 }
 
 function queryErrorCB(err) {
     console.log("queryErrorCB: "+err);
-    console.log err
+    console.log(err)
 }
 
 function successCB() {
