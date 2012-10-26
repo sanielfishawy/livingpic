@@ -27137,12 +27137,12 @@ var jsUri = Uri;
     };
 
     DB.ensure_key_value_table = function() {
-      return DB.db.transaction(DB.ensure_key_value_table_sql, DB.success_cb, DB.error_cb);
+      DB.ensure_db();
+      return DB.db.transaction(DB.ensure_key_value_table_sql, DB.error_cb, DB.success_cb);
     };
 
     DB.ensure_key_value_table_sql = function(tx) {
-      tx.executeSql('DROP TABLE IF EXISTS DEMO');
-      return tx.executeSql('CREATE TABLE IF NOT EXISTS DEMO (id unique, data)');
+      return tx.executeSql('CREATE TABLE IF NOT EXISTS key_value (key unique, value)');
     };
 
     DB.success_cb = function() {
@@ -27174,17 +27174,18 @@ var jsUri = Uri;
       }
     };
 
-    DB.set_sql = function(tx) {
+    DB.set = function(key, val) {
       DB.ensure_key_value_table();
+      return DB.db.transaction(DB.set_sql, DB.success_cb, DB.error_cb);
+    };
+
+    DB.set_sql = function(tx) {
       tx.executeSql("DELETE FROM key_value WHERE key = " + DB.key);
       return tx.executeSql("INSERT INTO key_value (key, value) VALUES (" + DB.key + ", " + DB.value + ")");
     };
 
-    DB.set = function(key, val) {
-      return DB.db.transaction(DB.set_sql, DB.success_cb, DB.error_cb);
-    };
-
     DB.get = function(key) {
+      DB.ensure_key_value_table();
       return DB.db.transaction(DB.get_sql, DB.error_cb);
     };
 
@@ -27192,13 +27193,9 @@ var jsUri = Uri;
       return tx.executeSql("SELECT * FROM key_value WHERE key = " + DB.key + ", [], query_success_cb, error_cb");
     };
 
-    DB.clear = function(key) {
-      return localStorage.removeItem(key);
-    };
+    DB.clear = function(key) {};
 
-    DB.clear_all = function() {
-      return localStorage.clear();
-    };
+    DB.clear_all = function() {};
 
     return DB;
 
