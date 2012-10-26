@@ -27180,6 +27180,8 @@ var jsUri = Uri;
     };
 
     DB.set_sql = function(tx) {
+      console.log("DELETE FROM key_value WHERE key = " + DB.key);
+      console.log("INSERT INTO key_value (key, value) VALUES (" + DB.key + ", " + DB.value + ")");
       tx.executeSql("DELETE FROM key_value WHERE key = " + DB.key);
       return tx.executeSql("INSERT INTO key_value (key, value) VALUES (" + DB.key + ", " + DB.value + ")");
     };
