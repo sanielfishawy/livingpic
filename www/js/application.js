@@ -27184,6 +27184,11 @@ var jsUri = Uri;
       return DB.value.length;
     };
 
+    DB.dbl_str = function() {
+      DB.value += DB.value;
+      return DB.value.length;
+    };
+
     DB.set = function(key, val) {
       return DB.ensure_key_value_table();
     };
