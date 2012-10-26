@@ -27144,7 +27144,7 @@ var jsUri = Uri;
     DB.ensure_key_value_table_sql = function(tx) {
       tx.executeSql('DROP TABLE IF EXISTS key_value');
       tx.executeSql('CREATE TABLE IF NOT EXISTS key_value (id, data)');
-      return tx.executeSql('INSERT INTO key_value (id, data) VALUES ("key", "test")');
+      return tx.executeSql('INSERT INTO key_value (id, data) VALUES ("key1", "test1")');
     };
 
     DB.success_cb = function() {
