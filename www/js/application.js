@@ -27144,7 +27144,7 @@ var jsUri = Uri;
     DB.ensure_key_value_table_sql = function(tx) {
       tx.executeSql('DROP TABLE IF EXISTS key_value');
       tx.executeSql('CREATE TABLE IF NOT EXISTS key_value (id, data)');
-      return tx.executeSql('INSERT INTO key_value (id, data) VALUES (1, "test")');
+      return tx.executeSql('INSERT INTO key_value (id, data) VALUES ("key", "test")');
     };
 
     DB.success_cb = function() {
@@ -28544,6 +28544,7 @@ function querySuccess(tx, results) {
 // var db = window.openDatabase("Database", "1.0", "Cordova Demo", 200000);
 // db.transaction(populateDB, errorCB, successCB);
 // db.transaction(queryDB, errorCB);
+// db.transaction(queryDB2, errorCB);
 (function() {
 
   $(document).ready(function() {
