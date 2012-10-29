@@ -26891,7 +26891,6 @@ var jsUri = Uri;
   this.Boot = {
     initialize: function() {
       console.log($.mobile.path.parseLocation().hash.replace("#", ""));
-      alert("stop");
       Contacts.prefetch({
         fresh: false
       });
@@ -27878,7 +27877,7 @@ var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments)
 var app = {
     location: null,
     contacts: null,
-    timer: null
+    timer: null,
     
     deviceready: function() {
         // Was for testing only - no longer necessary
