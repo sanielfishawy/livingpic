@@ -28274,9 +28274,15 @@ getUrlParam = function(url,name) {
   };
 
   this.invitees_first_names = function() {
-    return invitees_contact().map(function(contact) {
-      return contact.first_name;
-    });
+    if (this.Config.is_running_in_browser()) {
+      return invitees_contact().map(function(contact) {
+        return contact.first_name;
+      });
+    } else {
+      return invitees_contact().map(function(contact) {
+        return contact.name.givenName;
+      });
+    }
   };
 
   this.invitees_full_names = function() {
