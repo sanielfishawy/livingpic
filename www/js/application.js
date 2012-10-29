@@ -26890,11 +26890,13 @@ var jsUri = Uri;
 
   this.Boot = {
     initialize: function() {
-      console.log($.mobile.path.parseLocation().hash.replace("#", ""));
       Contacts.prefetch({
         fresh: false
       });
       new HostHandler;
+      if (Config.is_running_on_device()) {
+        new Location;
+      }
       return $.mobile.changePage("#welcome");
     }
   };
@@ -28293,6 +28295,51 @@ getUrlParam = function(url,name) {
   this.display_app_state = function() {
     return "Current_user: " + (current_user_id()) + " | Registered: " + (registered());
   };
+
+}).call(this);
+(function() {
+  var Location,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  Location = (function() {
+
+    function Location() {
+      this.location_error = __bind(this.location_error, this);
+
+      this.locationSuccess = __bind(this.locationSuccess, this);
+
+      this.get_location = __bind(this.get_location, this);
+
+    }
+
+    Location.loc = null;
+
+    Location.lat = null;
+
+    Location.long = null;
+
+    Location.INSTANCE = null;
+
+    Location.prototype.contstructor = function() {
+      return this.get_location();
+    };
+
+    Location.prototype.get_location = function() {
+      return navigator.geolocation.getCurrentPosition(Location.location_success, Location.location_error);
+    };
+
+    Location.prototype.locationSuccess = function(position) {
+      alert("position = lat " + position.coords.latitude + ", long " + position.coords.longitude);
+      return Location.loc = position;
+    };
+
+    Location.prototype.location_error = function(error) {
+      return alert("Error getting location: " + error.message);
+    };
+
+    return Location;
+
+  })();
 
 }).call(this);
 (function() {
