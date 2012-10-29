@@ -28318,7 +28318,7 @@ getUrlParam = function(url,name) {
     }
 
     GeoLocation.prototype.get_location = function() {
-      return navigator.geolocation.getCurrentPosition(GeoLocation.location_success, GeoLocation.location_error);
+      return navigator.geolocation.getCurrentPosition(GeoLocation.INSTANCE.location_success, GeoLocation.INSTANCE.location_error);
     };
 
     GeoLocation.prototype.location_success = function(position) {
