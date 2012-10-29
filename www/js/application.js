@@ -26505,6 +26505,8 @@ var jsUri = Uri;
       if (options == null) {
         options = {};
       }
+      this.picked_ids = __bind(this.picked_ids, this);
+
       this.picked_items = __bind(this.picked_items, this);
 
       AutoComplete.INSTANCE = this;
@@ -26543,6 +26545,10 @@ var jsUri = Uri;
 
     AutoComplete.prototype.picked_items = function() {
       return this.acp.picked_items;
+    };
+
+    AutoComplete.prototype.picked_ids = function() {
+      return keys(this.picked_items());
     };
 
     return AutoComplete;
@@ -26902,7 +26908,7 @@ var jsUri = Uri;
 
   $(document).ready(function() {
     return $("#confirm_invite").live("pagebeforeshow", function(event) {
-      $("#confirm_invite .invitees").html($.toSentence(invitees_first_names()));
+      $("#confirm_invite .invitees").html($.toSentence(Contacts.first_names(AutoComplete.INSTANCE.picked_ids())));
       return $("#confirm_invite .current_occasion").html(current_occasion().name);
     });
   });
@@ -26994,6 +27000,7 @@ var jsUri = Uri;
 (function() {
 
   window.Contacts = (function() {
+    var _this = this;
 
     function Contacts() {}
 
@@ -27105,9 +27112,8 @@ var jsUri = Uri;
         url: Config.base_url() + "/contacts",
         type: "POST",
         data: {
-          contacts: contacts()
+          contacts: contacts
         },
-        dataType: "json",
         success: function() {
           return alert("sent them ok");
         },
@@ -27121,6 +27127,30 @@ var jsUri = Uri;
       return ids.map(function(id) {
         return contacts_directory()[id];
       });
+    };
+
+    Contacts.first_names = function(ids) {
+      if (Config.is_running_in_browser()) {
+        return ids.map(function(id) {
+          return contacts_directory()[id].first_name;
+        });
+      } else {
+        return ids.map(function(id) {
+          return contacts_directory()[id].name.givenName;
+        });
+      }
+    };
+
+    Contacts.full_names = function(ids) {
+      if (Contacts.Config.is_running_in_browser()) {
+        return ids.map(function(id) {
+          return contacts_directory()[id].fullname;
+        });
+      } else {
+        return ids.map(function(id) {
+          return contacts_directory()[id].displayName;
+        });
+      }
     };
 
     return Contacts;
@@ -28014,7 +28044,6 @@ var app = {
         url: Config.base_url() + "/contacts",
         type: "POST",
         data: {contacts: JSON.stringify(contacts)},
-        dataType: "json",
         beforeSend: function(x) {
           if (x && x.overrideMimeType) {
             x.overrideMimeType("application/j-son;charset=UTF-8");
@@ -28115,13 +28144,12 @@ getUrlParam = function(url,name) {
 
   window.invite_done = function() {
     console.log("picked keys = " + keys(AutoComplete.INSTANCE.picked_items()));
-    set_invitees(keys(AutoComplete.INSTANCE.picked_items()));
     $.ajax({
       url: Config.base_url() + "/invite",
       type: "POST",
       data: {
         device: Config.device,
-        invitees: JSON.stringify(invitees_contact()),
+        invitees: Contacts.find_contacts_by_ids(AutoComplete.INSTANCE.picked_ids()),
         occasion_id: current_occasion().id
       }
     });
@@ -28255,40 +28283,6 @@ getUrlParam = function(url,name) {
 
   this.clear_contacts_directory = function() {
     return appState.clear("contacts_directory");
-  };
-
-  this.invitees = function() {
-    return appState.get("invitees");
-  };
-
-  this.set_invitees = function(obj) {
-    return appState.set("invitees", obj);
-  };
-
-  this.clear_invitees = function() {
-    return appState.clear("invitees");
-  };
-
-  this.invitees_contact = function() {
-    return Contacts.find_contacts_by_ids(invitees());
-  };
-
-  this.invitees_first_names = function() {
-    if (this.Config.is_running_in_browser()) {
-      return invitees_contact().map(function(contact) {
-        return contact.first_name;
-      });
-    } else {
-      return invitees_contact().map(function(contact) {
-        return contact.name.givenName;
-      });
-    }
-  };
-
-  this.invitees_full_names = function() {
-    return invitees_contact().map(function(contact) {
-      return contact.fullname;
-    });
   };
 
   this.display_app_state = function() {
@@ -28490,25 +28484,23 @@ getUrlParam = function(url,name) {
 }).call(this);
 (function() {
 
-  $(document).ready(function() {
-    return $("#tag_pic").bind("pageshow", function(event) {
-      return window.ac = new AutoComplete({
-        name_of_self: "ac",
+  window.goto_tag_pic_page = function() {
+    return Contacts.full_list(function(full_list) {
+      new AutoComplete({
         page_id: "tag_pic",
-        theme: "a"
+        full_list: full_list
       });
+      return $.mobile.changePage("#tag_pic");
     });
-  });
+  };
 
   window.tag_done = function() {
-    console.log("Tagged");
-    console.log(find_contacts_by_id(keys(ac.picked_items())));
     $.ajax({
-      url: Config.base_url() + "/social_actions/tag",
+      url: Config.base_url() + "/tag",
       type: "POST",
       data: {
         photo_id: 1,
-        tags: JSON.stringify(find_contacts_by_id(keys(ac.picked_items())))
+        tags: Contacts.find_contacts_by_ids(AutoComplete.INSTANCE.picked_ids())
       }
     });
     return $.mobile.changePage("#app_running", {
