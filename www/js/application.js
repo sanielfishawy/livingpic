@@ -26894,9 +26894,6 @@ var jsUri = Uri;
         fresh: false
       });
       new HostHandler;
-      if (Config.is_running_on_device()) {
-        new Location;
-      }
       return $.mobile.changePage("#welcome");
     }
   };
