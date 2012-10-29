@@ -28295,46 +28295,42 @@ getUrlParam = function(url,name) {
 
 }).call(this);
 (function() {
-  var Location,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  Location = (function() {
+  window.GeoLocation = (function() {
 
-    function Location() {
+    GeoLocation.loc = null;
+
+    GeoLocation.lat = (GeoLocation.loc != null) && GeoLocation.loc.coords.latitude;
+
+    GeoLocation.long = (GeoLocation.loc != null) && GeoLocation.loc.coords.longitude;
+
+    GeoLocation.INSTANCE = null;
+
+    function GeoLocation() {
       this.location_error = __bind(this.location_error, this);
 
       this.locationSuccess = __bind(this.locationSuccess, this);
 
       this.get_location = __bind(this.get_location, this);
-
+      this.get_location();
+      GeoLocation.INSTANCE = this;
     }
 
-    Location.loc = null;
-
-    Location.lat = null;
-
-    Location.long = null;
-
-    Location.INSTANCE = null;
-
-    Location.prototype.contstructor = function() {
-      return this.get_location();
+    GeoLocation.prototype.get_location = function() {
+      return navigator.geolocation.getCurrentPosition(GeoLocation.location_success, GeoLocation.location_error);
     };
 
-    Location.prototype.get_location = function() {
-      return navigator.geolocation.getCurrentPosition(Location.location_success, Location.location_error);
-    };
-
-    Location.prototype.locationSuccess = function(position) {
+    GeoLocation.prototype.locationSuccess = function(position) {
       alert("position = lat " + position.coords.latitude + ", long " + position.coords.longitude);
-      return Location.loc = position;
+      return GeoLocation.loc = position;
     };
 
-    Location.prototype.location_error = function(error) {
+    GeoLocation.prototype.location_error = function(error) {
       return alert("Error getting location: " + error.message);
     };
 
-    return Location;
+    return GeoLocation;
 
   })();
 
