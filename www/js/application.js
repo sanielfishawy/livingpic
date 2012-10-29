@@ -28313,8 +28313,8 @@ getUrlParam = function(url,name) {
       this.location_success = __bind(this.location_success, this);
 
       this.get_location = __bind(this.get_location, this);
-      this.get_location();
       GeoLocation.INSTANCE = this;
+      this.get_location();
     }
 
     GeoLocation.prototype.get_location = function() {
