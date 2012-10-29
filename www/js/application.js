@@ -26890,6 +26890,8 @@ var jsUri = Uri;
 
   this.Boot = {
     initialize: function() {
+      console.log($.mobile.path.parseLocation().hash.replace("#", ""));
+      alert("stop");
       Contacts.prefetch({
         fresh: false
       });
@@ -27776,6 +27778,7 @@ var jsUri = Uri;
       if (Config.is_running_in_browser() || (this.selected_host != null)) {
         return $.ajax({
           async: false,
+          dataType: "json",
           url: base_url + "/app/host",
           success: function(data, textStatus, jqXHR) {
             var host;
@@ -27875,6 +27878,7 @@ var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments)
 var app = {
     location: null,
     contacts: null,
+    timer: null
     
     deviceready: function() {
         // Was for testing only - no longer necessary
@@ -28063,10 +28067,12 @@ var app = {
     // = Locations =
     // =============
     getLocation: function() {
+      app.timer = new Date().getTime()
       navigator.geolocation.getCurrentPosition(app.locationSuccess, app.locationError);
     },
     
     locationSuccess: function(position) {
+      console.log(new Date().getTime() - app.timer)
       alert("position = lat " + position.coords.latitude + ", long " + position.coords.longitude)
       app.location = position;
       return position;
