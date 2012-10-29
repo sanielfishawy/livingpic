@@ -28310,7 +28310,7 @@ getUrlParam = function(url,name) {
     function GeoLocation() {
       this.location_error = __bind(this.location_error, this);
 
-      this.locationSuccess = __bind(this.locationSuccess, this);
+      this.location_success = __bind(this.location_success, this);
 
       this.get_location = __bind(this.get_location, this);
       this.get_location();
@@ -28321,7 +28321,7 @@ getUrlParam = function(url,name) {
       return navigator.geolocation.getCurrentPosition(GeoLocation.location_success, GeoLocation.location_error);
     };
 
-    GeoLocation.prototype.locationSuccess = function(position) {
+    GeoLocation.prototype.location_success = function(position) {
       alert("position = lat " + position.coords.latitude + ", long " + position.coords.longitude);
       return GeoLocation.loc = position;
     };
