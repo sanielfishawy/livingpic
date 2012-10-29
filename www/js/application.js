@@ -26888,7 +26888,7 @@ var jsUri = Uri;
         fresh: false
       });
       new HostHandler;
-      return $.mobile.changePage("#admin");
+      return $.mobile.changePage("#welcome");
     }
   };
 
@@ -27649,7 +27649,7 @@ var jsUri = Uri;
         uri: "192.168.1.65:3000"
       }, {
         name: "Sani Boat",
-        uri: "192.168.1.72:3000"
+        uri: "192.168.1.71:3000"
       }, {
         name: "Farhad Boat",
         uri: "192.168.1.69:3000"
@@ -28116,13 +28116,12 @@ getUrlParam = function(url,name) {
   window.invite_done = function() {
     console.log("picked keys = " + keys(AutoComplete.INSTANCE.picked_items()));
     set_invitees(keys(AutoComplete.INSTANCE.picked_items()));
-    console.log(find_contacts_by_id(invitees()));
     $.ajax({
       url: Config.base_url() + "/invite",
       type: "POST",
       data: {
         device: Config.device,
-        invitees: JSON.stringify(find_contacts_by_id(invitees())),
+        invitees: JSON.stringify(invitees_contact()),
         occasion_id: current_occasion().id
       }
     });
@@ -28271,7 +28270,7 @@ getUrlParam = function(url,name) {
   };
 
   this.invitees_contact = function() {
-    return find_contacts_by_id(invitees());
+    return Contacts.find_contacts_by_ids(invitees());
   };
 
   this.invitees_first_names = function() {
