@@ -28420,8 +28420,8 @@ getUrlParam = function(url,name) {
 
     Picture.capture = function(callback) {
       Picture.capture_callback = callback;
-      return navigator.camera.getPicture(GetPicture.capture_success, GetPicture.capture_error, {
-        quality: GetPicture.QUALITY,
+      return navigator.camera.getPicture(Picture.capture_success, Picture.capture_error, {
+        quality: Picture.QUALITY,
         destinationType: Camera.DestinationType.FILE_URI
       });
     };
