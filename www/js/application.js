@@ -28403,16 +28403,10 @@ getUrlParam = function(url,name) {
 
 }).call(this);
 (function() {
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   window.Picture = (function() {
 
-    function Picture() {
-      this.capture_success = __bind(this.capture_success, this);
-
-      this.capture_error = __bind(this.capture_error, this);
-
-    }
+    function Picture() {}
 
     Picture.last = null;
 
@@ -28426,11 +28420,11 @@ getUrlParam = function(url,name) {
       });
     };
 
-    Picture.prototype.capture_error = function(error) {
+    Picture.capture_error = function(error) {
       return alert("Error capturing the image: " + error);
     };
 
-    Picture.prototype.capture_success = function(imageDataUrl) {
+    Picture.capture_success = function(imageDataUrl) {
       alert("Successfully captured the image at " + imageDataUrl);
       Picture.last = imageDataUrl;
       return Picture.capture_callback(imageDataUrl);
