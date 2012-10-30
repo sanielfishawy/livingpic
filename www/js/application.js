@@ -28301,9 +28301,9 @@ getUrlParam = function(url,name) {
 
     GeoLocation.loc = null;
 
-    GeoLocation.lat = (GeoLocation.loc != null) && GeoLocation.loc.coords.latitude;
+    GeoLocation.lat = (GeoLocation.loc != null) && GoeLoc.loc.coords.latitude;
 
-    GeoLocation.long = (GeoLocation.loc != null) && GeoLocation.loc.coords.longitude;
+    GeoLocation.long = (GeoLocation.loc != null) && GoeLoc.loc.coords.longitude;
 
     GeoLocation.INSTANCE = null;
 
@@ -28400,6 +28400,45 @@ getUrlParam = function(url,name) {
     return OccasionsHandler;
 
   })();
+
+}).call(this);
+(function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  window.Picture = (function() {
+
+    function Picture() {
+      this.capture_success = __bind(this.capture_success, this);
+
+      this.capture_error = __bind(this.capture_error, this);
+
+    }
+
+    Picture.last = null;
+
+    Picture.QUALITY = 50;
+
+    Picture.capture = function(callback) {
+      Picture.capture_callback = callback;
+      return navigator.camera.getPicture(GetPicture.capture_success, GetPicture.capture_error, {
+        quality: GetPicture.QUALITY,
+        destinationType: Camera.DestinationType.FILE_URI
+      });
+    };
+
+    Picture.prototype.capture_error = function(error) {
+      return alert("Error capturing the image: " + error);
+    };
+
+    Picture.prototype.capture_success = function(imageDataUrl) {
+      alert("Successfully captured the image at " + imageDataUrl);
+      Picture.last = imageDataUrl;
+      return Picture.capture_callback(imageDataUrl);
+    };
+
+    return Picture;
+
+  }).call(this);
 
 }).call(this);
 (function() {
