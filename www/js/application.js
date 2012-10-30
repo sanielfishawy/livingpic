@@ -27293,6 +27293,36 @@ var jsUri = Uri;
 
 }).call(this);
 (function() {
+
+  window.Filer = (function() {
+
+    Filer.prototype.fs = null;
+
+    Filer.INSTANCE = null;
+
+    function Filer(ready_callback) {
+      if (ready_callback == null) {
+        ready_callback = function(r) {
+          return console.log(r);
+        };
+      }
+      Filer.INSTANCE = this;
+      window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, (function(fs) {
+        Filer.INSTANCE.fs = fs;
+        return ready_callback(Filer.INSTANCE);
+      }), null);
+    }
+
+    Filer.root = function() {
+      return (Filer.fs != null) && Filer.fs.root;
+    };
+
+    return Filer;
+
+  }).call(this);
+
+}).call(this);
+(function() {
   var ThumbWidthCalculator,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -28413,6 +28443,11 @@ getUrlParam = function(url,name) {
     Picture.QUALITY = 50;
 
     Picture.capture = function(callback) {
+      if (callback == null) {
+        callback = function(p) {
+          return console.log(p);
+        };
+      }
       Picture.capture_callback = callback;
       return navigator.camera.getPicture(Picture.capture_success, Picture.capture_error, {
         quality: Picture.QUALITY,
@@ -28425,9 +28460,30 @@ getUrlParam = function(url,name) {
     };
 
     Picture.capture_success = function(imageDataUrl) {
-      alert("Successfully captured the image at " + imageDataUrl);
       Picture.last = imageDataUrl;
       return Picture.capture_callback(imageDataUrl);
+    };
+
+    Picture.pick = function(callback) {
+      if (callback == null) {
+        callback = function(p) {
+          return console.log(p);
+        };
+      }
+      Picture.pick_callback = callback;
+      return navigator.camera.getPicture(Picture.pick_success, Picture.pick_error, {
+        sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+        destinationType: Camera.DestinationType.FILE_URI
+      });
+    };
+
+    Picture.pick_uccess = function(imageDataUrl) {
+      Picture.last = imageDataUrl;
+      return Picture.pick_callback(imageDataUrl);
+    };
+
+    Picture.pick_error = function(errorMessage) {
+      return alert("Error loading from album");
     };
 
     return Picture;
