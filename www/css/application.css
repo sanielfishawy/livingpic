@@ -2595,6 +2595,16 @@ div.ps-carousel-item-error {
 
 
 */
+/* line 2, ../../app/assets/stylesheets/project/admin.css.scss */
+.participationInfo .participationSummary {
+  cursor: pointer;
+  color: steelblue;
+}
+/* line 7, ../../app/assets/stylesheets/project/admin.css.scss */
+.participationInfo .participationDetail .label {
+  font-style: italic;
+}
+
 /* line 7, ../../app/assets/stylesheets/project/auto_complete.css.scss */
 .auto_complete_page .ui-listview-filter {
   margin: 0px -15px;
