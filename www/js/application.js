@@ -31961,7 +31961,7 @@ var jsUri = Uri;
       Filer.INSTANCE = this;
       window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, (function(fs) {
         console.log("got fs");
-        this.handle_fs(fs);
+        Filer.INSTANCE.handle_fs(fs);
         return ready_callback(fs);
       }), null);
     }
