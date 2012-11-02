@@ -31934,6 +31934,7 @@ var jsUri = Uri;
 
 }).call(this);
 (function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   window.Filer = (function() {
 
@@ -31947,6 +31948,8 @@ var jsUri = Uri;
           return console.log(r);
         };
       }
+      this.root = __bind(this.root, this);
+
       Filer.INSTANCE = this;
       window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, (function(fs) {
         Filer.INSTANCE.fs = fs;
@@ -31954,13 +31957,13 @@ var jsUri = Uri;
       }), null);
     }
 
-    Filer.root = function() {
-      return (Filer.fs != null) && Filer.fs.root;
+    Filer.prototype.root = function() {
+      return (this.fs != null) && this.fs.root;
     };
 
     return Filer;
 
-  }).call(this);
+  })();
 
 }).call(this);
 (function() {

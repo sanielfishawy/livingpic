@@ -53,7 +53,6 @@
 </div>
 <script type="text/javascript" charset="utf-8">
   $("#welcome").live("pagebeforeshow", function(event,data){
-    console.log("Setting current user name ");
     if (current_user().first_name) {$(".first_name").html(current_user().first_name)}
   })
 </script>
