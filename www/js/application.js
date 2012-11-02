@@ -31942,7 +31942,7 @@ var jsUri = Uri;
 
     Filer.prototype.current_directory = null;
 
-    Filer.prototype.cont = null;
+    Filer.prototype.current_contents = null;
 
     Filer.INSTANCE = null;
 
@@ -31952,7 +31952,11 @@ var jsUri = Uri;
           return console.log(r);
         };
       }
+      this.cd = __bind(this.cd, this);
+
       this.handle_ls = __bind(this.handle_ls, this);
+
+      this.ls_gd_success = __bind(this.ls_gd_success, this);
 
       this.ls = __bind(this.ls, this);
 
@@ -31983,15 +31987,22 @@ var jsUri = Uri;
       return this.root() && this.root().fullPath;
     };
 
-    Filer.prototype.ls = function() {
+    Filer.prototype.ls = function(rel_path) {
+      return this.current_directory.getDirectory(Filer.INSTANCE.ls_gd_success, function() {
+        return console.log("" + rel_path + " is not a directory.");
+      });
+    };
+
+    Filer.prototype.ls_gd_success = function(directory) {
       var dr;
-      dr = this.current_directory.createReader();
+      dr = directory.createReader();
       return dr.readEntries(Filer.INSTANCE.handle_ls);
     };
 
     Filer.prototype.handle_ls = function(r) {
       var dir, dirs, file, files, obj, str, _fn, _i, _j, _k, _len, _len1, _len2, _ref, _ref1,
         _this = this;
+      this.current_contents = r;
       dirs = {};
       files = {};
       _fn = function() {
@@ -32006,19 +32017,28 @@ var jsUri = Uri;
         obj = r[_i];
         _fn();
       }
-      str = "Directories:";
-      _ref = keys(dirs);
+      str = "DIRECTORIES:";
+      _ref = keys(dirs).sort();
       for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
         dir = _ref[_j];
         str += "\n" + dir;
       }
-      str += "\n\n Files:";
-      _ref1 = keys(files);
+      str += "\n\nFILES:";
+      _ref1 = keys(files).sort();
       for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
         file = _ref1[_k];
         str += "\n" + file;
       }
       return console.log(str);
+    };
+
+    Filer.prototype.cd = function(dir) {
+      var path;
+      path = this.current_directory.fullPath + "/" + dir;
+      return entry.getDirectory("newDir", {
+        create: true,
+        exclusive: false
+      }, success, fail);
     };
 
     return Filer;
