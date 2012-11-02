@@ -31942,6 +31942,8 @@ var jsUri = Uri;
 
     Filer.prototype.current_directory = null;
 
+    Filer.prototype.cont = null;
+
     Filer.INSTANCE = null;
 
     function Filer(ready_callback) {
@@ -31956,13 +31958,20 @@ var jsUri = Uri;
 
       this.root = __bind(this.root, this);
 
+      this.handle_fs = __bind(this.handle_fs, this);
+
       Filer.ready_call_back = ready_callback;
       Filer.INSTANCE = this;
       window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, (function(fs) {
-        Filer.INSTANCE.fs = fs;
+        Filer.INSTANCE.handle_fs(fs);
         return ready_callback(Filer.INSTANCE);
       }), null);
     }
+
+    Filer.prototype.handle_fs = function(fs) {
+      this.fs = fs;
+      return this.current_directory = this.root;
+    };
 
     Filer.prototype.root = function() {
       return (this.fs != null) && this.fs.root;
@@ -31972,7 +31981,15 @@ var jsUri = Uri;
       return this.root() && this.root().fullPath;
     };
 
-    Filer.prototype.ls = function() {};
+    Filer.prototype.ls = function() {
+      var dr;
+      dr = current_directory.createReader();
+      return dr.readEntries((function(r) {
+        return this.cont = r;
+      }), (function(r) {
+        return console.log(r);
+      }));
+    };
 
     return Filer;
 
