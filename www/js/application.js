@@ -32041,11 +32041,17 @@ var jsUri = Uri;
     };
 
     Filer.prototype.cd = function(rel_path) {
-      return this.current_directory.getDirectory(rel_path, {
-        create: false
-      }, Filer.INSTANCE.cd_gd_success, function() {
-        return console.log("'" + rel_path + "' is not a directory.");
-      });
+      if (rel_path = "..") {
+        return this.current_directory.getParent(Filer.INSTANCE.cd_gd_success, function() {
+          return console.log("Parent of '" + this.current_directory.fullPath + "' is not a directory.");
+        });
+      } else {
+        return this.current_directory.getDirectory(rel_path, {
+          create: false
+        }, Filer.INSTANCE.cd_gd_success, function() {
+          return console.log("'" + rel_path + "' is not a directory.");
+        });
+      }
     };
 
     Filer.prototype.cd_gd_success = function(directory) {
