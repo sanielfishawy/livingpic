@@ -31983,7 +31983,7 @@ var jsUri = Uri;
 
     Filer.prototype.ls = function() {
       var dr;
-      dr = current_directory.createReader();
+      dr = this.current_directory.createReader();
       return dr.readEntries((function(r) {
         return this.cont = r;
       }), (function(r) {
