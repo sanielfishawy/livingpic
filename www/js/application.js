@@ -32042,10 +32042,12 @@ var jsUri = Uri;
 
     Filer.prototype.cd = function(rel_path) {
       if (rel_path === "..") {
+        console.log("getting parent");
         return this.current_directory.getParent(Filer.INSTANCE.cd_gd_success, function() {
           return console.log("Parent of '" + this.current_directory.fullPath + "' is not a directory.");
         });
       } else {
+        console.log("getting " + rel_path);
         return this.current_directory.getDirectory(rel_path, {
           create: false
         }, Filer.INSTANCE.cd_gd_success, function() {
