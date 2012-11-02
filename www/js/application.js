@@ -31989,7 +31989,9 @@ var jsUri = Uri;
 
     Filer.prototype.ls = function(rel_path) {
       if (rel_path != null) {
-        return this.current_directory.getDirectory(rel_path, Filer.INSTANCE.ls_gd_success, function() {
+        return this.current_directory.getDirectory(rel_path, {
+          create: false
+        }, Filer.INSTANCE.ls_gd_success, function() {
           return console.log("" + rel_path + " is not a directory.");
         });
       } else {
