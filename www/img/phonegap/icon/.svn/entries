@@ -1,37 +1,0 @@
-8
-
-dir
-6859
-https://noplanbees.com/npb-svn/snapshot3/app/assets/images/phonegap/icon
-https://noplanbees.com/npb-svn
-
-
-
-2012-10-09T00:07:14.456906Z
-6801
-sani
-
-
-svn:special svn:externals svn:needs-lock
-
-bada-wac
-dir
-
-webos
-dir
-
-android
-dir
-
-blackberry
-dir
-
-windows-phone
-dir
-
-bada
-dir
-
-ios
-dir
-

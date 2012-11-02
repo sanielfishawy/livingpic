@@ -11,16 +11,14 @@
     <link rel="stylesheet" type="text/css" href="css/application.css" />
     
     <script type="text/javascript" charset="utf-8">
+      // Sani: I use this for configuration settings that have to be in place even before boot.js is run on the device.
+      // Probably not the best place for them. Try to keep them to a minimum.
       var PACKAGED_FOR_DEVICE = true
       window.WeinreServerURL = "http://www.trymyui.com:9170"
     </script>
-    <!-- Phonegap.js is included automatically by phonegap build and is different for each device. This following line tells phonegap build to include the appropriate phonegap.js. -->
+    <!-- GARF: I noticed that cordova and phonegap are being loaded in our app several times by phonegap build. Need to fix this bug before shipping. Phonegap.js is included automatically by phonegap build and is different for each device. This following line tells phonegap build to include the appropriate phonegap.js. -->
     <script type="text/javascript" src="phonegap.js"></script>
-    
-    <!-- Put scripts here rather than in head so that document.ready fires only when all scripts have loaded. -->
     <script type="text/javascript" src="js/application.js"></script>
-    <!-- index.js is now included in application.js -->
-    <!-- <script type="text/javascript" src="js/index.js"></script> -->
   </head>
   
   <body> 
