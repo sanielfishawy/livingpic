@@ -31952,6 +31952,8 @@ var jsUri = Uri;
           return console.log(r);
         };
       }
+      this.handle_ls = __bind(this.handle_ls, this);
+
       this.ls = __bind(this.ls, this);
 
       this.root_path = __bind(this.root_path, this);
@@ -31970,7 +31972,7 @@ var jsUri = Uri;
 
     Filer.prototype.handle_fs = function(fs) {
       this.fs = fs;
-      return this.current_directory = this.root;
+      return this.current_directory = this.root();
     };
 
     Filer.prototype.root = function() {
@@ -31984,11 +31986,39 @@ var jsUri = Uri;
     Filer.prototype.ls = function() {
       var dr;
       dr = this.current_directory.createReader();
-      return dr.readEntries((function(r) {
-        return this.cont = r;
-      }), (function(r) {
-        return console.log(r);
-      }));
+      return dr.readEntries(Filer.Instance.handle_ls(r));
+    };
+
+    Filer.prototype.handle_ls = function(r) {
+      var dir, dirs, file, files, obj, str, _fn, _i, _j, _k, _len, _len1, _len2, _ref, _ref1,
+        _this = this;
+      dirs = {};
+      files = {};
+      _fn = function() {
+        if (obj.isDirectory) {
+          dirs[obj.name] = obj;
+        }
+        if (obj.isFile) {
+          return files[obj.name] = obj;
+        }
+      };
+      for (_i = 0, _len = r.length; _i < _len; _i++) {
+        obj = r[_i];
+        _fn();
+      }
+      str = "Directories:";
+      _ref = keys(dirs);
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        dir = _ref[_j];
+        str += "\n" + dir;
+      }
+      str += "\n\n Files:";
+      _ref1 = keys(files);
+      for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+        file = _ref1[_k];
+        str += "\n" + file;
+      }
+      return console.log(str);
     };
 
     return Filer;
