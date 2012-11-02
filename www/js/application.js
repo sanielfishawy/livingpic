@@ -31952,6 +31952,12 @@ var jsUri = Uri;
           return console.log(r);
         };
       }
+      this.upload_img_fail = __bind(this.upload_img_fail, this);
+
+      this.upload_img_success = __bind(this.upload_img_success, this);
+
+      this.upload_img = __bind(this.upload_img, this);
+
       this.cd_gd_success = __bind(this.cd_gd_success, this);
 
       this.cd = __bind(this.cd, this);
@@ -32008,7 +32014,7 @@ var jsUri = Uri;
     };
 
     Filer.prototype.print_ls = function(r) {
-      var dir, dirs, file, files, obj, str, _fn, _i, _j, _k, _len, _len1, _len2, _ref, _ref1,
+      var dir, dirs, files, fl, obj, str, _fn, _i, _j, _k, _len, _len1, _len2, _ref, _ref1,
         _this = this;
       this.current_contents = r;
       dirs = {};
@@ -32034,8 +32040,8 @@ var jsUri = Uri;
       str += "\n\nFILES:";
       _ref1 = keys(files).sort();
       for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
-        file = _ref1[_k];
-        str += "\n" + file;
+        fl = _ref1[_k];
+        str += "\n" + fl + " - " + files[fl].file.size + " - " + files[fl].fullPath;
       }
       return console.log(str);
     };
@@ -32059,6 +32065,33 @@ var jsUri = Uri;
     Filer.prototype.cd_gd_success = function(directory) {
       this.current_directory = directory;
       return console.log(this.current_directory.fullPath);
+    };
+
+    Filer.prototype.upload_img = function(img_file) {
+      var ft, img_uri, options, params;
+      options = new FileUploadOptions();
+      options.fileKey = "file";
+      options.mimeType = "image/jpeg";
+      img_uri = typeof img_file === "string" ? img_file : img_file.fullPath;
+      options.fileName = fl.substr(img_uri.lastIndexOf('/') + 1);
+      params = new Object();
+      params.value1 = "test";
+      params.value2 = "param";
+      options.params = params;
+      ft = new FileTransfer();
+      return ft.upload(imageURI, Config.base_url() + "/photos/create", Filer.INSTANCE.upload_img_success, Filer.INSTANCE.upload_img_fail, options);
+    };
+
+    Filer.prototype.upload_img_success = function(r) {
+      console.log("Code = " + r.responseCode);
+      console.log("Response = " + r.response);
+      return console.log("Sent = " + r.bytesSent);
+    };
+
+    Filer.prototype.upload_img_fail = function(error) {
+      console.log("An error has occurred: Code = " + error.code);
+      console.log("upload error source " + error.source);
+      return console.log("upload error target " + error.target);
     };
 
     return Filer;
