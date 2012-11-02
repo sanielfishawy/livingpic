@@ -31988,9 +31988,13 @@ var jsUri = Uri;
     };
 
     Filer.prototype.ls = function(rel_path) {
-      return this.current_directory.getDirectory(Filer.INSTANCE.ls_gd_success, function() {
-        return console.log("" + rel_path + " is not a directory.");
-      });
+      if (rel_path != null) {
+        return this.current_directory.getDirectory(rel_path, Filer.INSTANCE.ls_gd_success, function() {
+          return console.log("" + rel_path + " is not a directory.");
+        });
+      } else {
+        return this.ls_gd_success(this.current_directory);
+      }
     };
 
     Filer.prototype.ls_gd_success = function(directory) {
