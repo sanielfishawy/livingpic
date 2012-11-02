@@ -32041,7 +32041,7 @@ var jsUri = Uri;
     };
 
     Filer.prototype.cd = function(rel_path) {
-      if (rel_path = "..") {
+      if (rel_path === "..") {
         return this.current_directory.getParent(Filer.INSTANCE.cd_gd_success, function() {
           return console.log("Parent of '" + this.current_directory.fullPath + "' is not a directory.");
         });
