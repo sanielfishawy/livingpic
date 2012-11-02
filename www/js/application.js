@@ -31952,9 +31952,11 @@ var jsUri = Uri;
           return console.log(r);
         };
       }
+      this.cd_gd_success = __bind(this.cd_gd_success, this);
+
       this.cd = __bind(this.cd, this);
 
-      this.handle_ls = __bind(this.handle_ls, this);
+      this.print_ls = __bind(this.print_ls, this);
 
       this.ls_gd_success = __bind(this.ls_gd_success, this);
 
@@ -31992,7 +31994,7 @@ var jsUri = Uri;
         return this.current_directory.getDirectory(rel_path, {
           create: false
         }, Filer.INSTANCE.ls_gd_success, function() {
-          return console.log("" + rel_path + " is not a directory.");
+          return console.log("'" + rel_path + "' is not a directory.");
         });
       } else {
         return this.ls_gd_success(this.current_directory);
@@ -32002,10 +32004,10 @@ var jsUri = Uri;
     Filer.prototype.ls_gd_success = function(directory) {
       var dr;
       dr = directory.createReader();
-      return dr.readEntries(Filer.INSTANCE.handle_ls);
+      return dr.readEntries(Filer.INSTANCE.print_ls);
     };
 
-    Filer.prototype.handle_ls = function(r) {
+    Filer.prototype.print_ls = function(r) {
       var dir, dirs, file, files, obj, str, _fn, _i, _j, _k, _len, _len1, _len2, _ref, _ref1,
         _this = this;
       this.current_contents = r;
@@ -32038,13 +32040,17 @@ var jsUri = Uri;
       return console.log(str);
     };
 
-    Filer.prototype.cd = function(dir) {
-      var path;
-      path = this.current_directory.fullPath + "/" + dir;
-      return entry.getDirectory("newDir", {
-        create: true,
-        exclusive: false
-      }, success, fail);
+    Filer.prototype.cd = function(rel_path) {
+      return this.current_directory.getDirectory(rel_path, {
+        create: false
+      }, Filer.INSTANCE.cd_gd_success, function() {
+        return console.log("'" + rel_path + "' is not a directory.");
+      });
+    };
+
+    Filer.prototype.cd_gd_success = function(directory) {
+      this.current_directory = directory;
+      return console.log(this.current_directory.fullPath);
     };
 
     return Filer;
