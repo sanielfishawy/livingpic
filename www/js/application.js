@@ -32077,7 +32077,7 @@ var jsUri = Uri;
       params.value2 = "param";
       options.params = params;
       ft = new FileTransfer();
-      return ft.upload(imageURI, Config.base_url() + "/photos/create", Filer.INSTANCE.upload_img_success, Filer.INSTANCE.upload_img_fail, options);
+      return ft.upload(img_uri, Config.base_url() + "/photos/create", Filer.INSTANCE.upload_img_success, Filer.INSTANCE.upload_img_fail, options);
     };
 
     Filer.prototype.upload_img_success = function(r) {
