@@ -32048,12 +32048,10 @@ var jsUri = Uri;
 
     Filer.prototype.cd = function(rel_path) {
       if (rel_path === "..") {
-        console.log("getting parent");
         return this.current_directory.getParent(Filer.INSTANCE.cd_gd_success, function() {
           return console.log("Parent of '" + this.current_directory.fullPath + "' is not a directory.");
         });
       } else {
-        console.log("getting " + rel_path);
         return this.current_directory.getDirectory(rel_path, {
           create: false
         }, Filer.INSTANCE.cd_gd_success, function() {
@@ -32073,7 +32071,7 @@ var jsUri = Uri;
       options.fileKey = "file";
       options.mimeType = "image/jpeg";
       img_uri = typeof img_file === "string" ? img_file : img_file.fullPath;
-      options.fileName = fl.substr(img_uri.lastIndexOf('/') + 1);
+      options.fileName = img_urif.substr(img_uri.lastIndexOf('/') + 1);
       params = new Object();
       params.value1 = "test";
       params.value2 = "param";
