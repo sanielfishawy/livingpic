@@ -32041,7 +32041,7 @@ var jsUri = Uri;
       _ref1 = keys(files).sort();
       for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
         fl = _ref1[_k];
-        str += "\n" + fl + " - " + files[fl].file.size + " - " + files[fl].fullPath;
+        str += "\n" + fl + " - " + files[fl].fullPath;
       }
       return console.log(str);
     };
@@ -32071,7 +32071,7 @@ var jsUri = Uri;
       options.fileKey = "file";
       options.mimeType = "image/jpeg";
       img_uri = typeof img_file === "string" ? img_file : img_file.fullPath;
-      options.fileName = img_urif.substr(img_uri.lastIndexOf('/') + 1);
+      options.fileName = img_uri.substr(img_uri.lastIndexOf('/') + 1);
       params = new Object();
       params.value1 = "test";
       params.value2 = "param";
