@@ -11,8 +11,9 @@
     <link rel="stylesheet" type="text/css" href="css/application.css" />
     
     <script type="text/javascript" charset="utf-8">
-      // Sani: I use this for configuration settings that have to be in place even before boot.js is run on the device.
-      // Probably not the best place for them. Try to keep them to a minimum.
+      // Sani: I use this for configuration settings that have to be in place before any scripts are loaded 
+      // even before boot.js is run on the device. Probably not the best place for them. Try to keep them to a minimum.
+      // Later we can move them to a config.js file that is loaded first in the manifest.
       var PACKAGED_FOR_DEVICE = true
       window.WeinreServerURL = "http://www.trymyui.com:9170"
     </script>
@@ -148,18 +149,19 @@
   <div data-role="content" >
     <h1>Sorry about that</h1>
     Please edit
-    <form id="user_name">
+    <form>
       <label for="first_name">First name:</label>
       <input type="text" name="first_name" id="edit_first_name" value=""  placeholder="First name"/>
       <label for="last_name">Last name:</label>
       <input type="text" name="last_name" id="edit_last_name" value=""  placeholder="Last name"/>
       <div class="button_box">
-        <div data-role="button" 
-              data-theme="b" 
-              data-transition="slide" 
-              onclick="submit_name($('#user_name').serializeArray())">Submit</div>
+        <div data-role="button"
+        data-theme="b" 
+        data-transition="slide" 
+        onclick="submit_name($(this).closest('form').serializeArray())">Submit</div>
       </div>
     </form>
+
   </div>
   
   

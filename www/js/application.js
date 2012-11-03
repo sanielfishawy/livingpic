@@ -23565,8 +23565,8 @@ $( document ).bind( "pagecreate create", function( e ) {
 		initializePage: function() {
 			// find present pages
 			var $pages = $( ":jqmData(role='page'), :jqmData(role='dialog')" ),
-				hash = $.mobile.path.parseLocation().hash.replace("#", ""),
-				hashPage = document.getElementById( hash );
+				hash = $.mobile.path.parseLocation().hash.replace("#", "");
+			var	hashPage = hash && document.getElementById( hash );
 
 			// if no pages are found, create one with body's inner html
 			if ( !$pages.length ) {
@@ -31535,6 +31535,9 @@ var jsUri = Uri;
         fresh: false
       });
       new HostHandler;
+      if (false && Config.is_running_on_device()) {
+        new GeoLocation;
+      }
       return $.mobile.changePage("#welcome");
     }
   };
@@ -32065,7 +32068,7 @@ var jsUri = Uri;
       return console.log(this.current_directory.fullPath);
     };
 
-    Filer.prototype.upload_img = function(img_file) {
+    Filer.prototype.upload_img = function(img_file, photo_params) {
       var ft, img_uri, options, params;
       options = new FileUploadOptions();
       options.fileKey = "file";
@@ -32073,8 +32076,7 @@ var jsUri = Uri;
       img_uri = typeof img_file === "string" ? img_file : img_file.fullPath;
       options.fileName = img_uri.substr(img_uri.lastIndexOf('/') + 1);
       params = new Object();
-      params.value1 = "test";
-      params.value2 = "param";
+      params.photo = photo_params;
       options.params = params;
       ft = new FileTransfer();
       return ft.upload(img_uri, Config.base_url() + "/photos/create", Filer.INSTANCE.upload_img_success, Filer.INSTANCE.upload_img_fail, options);
@@ -32474,8 +32476,11 @@ var jsUri = Uri;
         name: "None",
         uri: ""
       }, {
-        name: "Localhost",
+        name: "Localhost-127",
         uri: "127.0.0.1:3000"
+      }, {
+        name: "localhost",
+        uri: "localhost:3000"
       }, {
         name: "LivingPic.com",
         uri: "www.livingpic.com"
@@ -33127,12 +33132,12 @@ getUrlParam = function(url,name) {
     };
 
     GeoLocation.prototype.location_success = function(position) {
-      alert("position = lat " + position.coords.latitude + ", long " + position.coords.longitude);
+      console.log("position = lat " + position.coords.latitude + ", long " + position.coords.longitude);
       return GeoLocation.loc = position;
     };
 
     GeoLocation.prototype.location_error = function(error) {
-      return alert("Error getting location: " + error.message);
+      return console.log("Error getting location: " + error.message);
     };
 
     return GeoLocation;
@@ -33392,6 +33397,8 @@ getUrlParam = function(url,name) {
 
 }).call(this);
 (function() {
+
+  window.capture_pic = function() {};
 
   window.goto_tag_pic_page = function() {
     return Contacts.full_list(function(full_list) {
