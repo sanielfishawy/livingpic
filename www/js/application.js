@@ -31538,6 +31538,7 @@ var jsUri = Uri;
       if (Config.is_running_on_device()) {
         new GeoLocation;
       }
+      console.log("before change page");
       return $.mobile.changePage("#welcome");
     }
   };
