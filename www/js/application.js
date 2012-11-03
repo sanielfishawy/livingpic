@@ -1,4 +1,4 @@
-/* some more text here
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -31535,7 +31535,7 @@ var jsUri = Uri;
         fresh: false
       });
       new HostHandler;
-      if (false && Config.is_running_on_device()) {
+      if (Config.is_running_on_device()) {
         new GeoLocation;
       }
       return $.mobile.changePage("#welcome");
