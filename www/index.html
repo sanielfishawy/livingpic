@@ -56,6 +56,7 @@
 <script type="text/javascript" charset="utf-8">
   $("#welcome").live("pagebeforeshow", function(event,data){
     if (current_user().first_name) {$(".first_name").html(current_user().first_name)}
+    if (current_user().id == null) {$("#welcome_next_page").attr("href","#unknown_user_name")}
   })
 </script>
 <div id="welcome" data-role="page"  data-theme="c">
@@ -73,7 +74,7 @@
       <p>Welcome to LivingPic!</p>
       <p>Shall we get you set up?</p>
       <div class="button_box">
-        <a href="#confirm_known_user" data-role="button" data-icon="arrow-r" data-iconpos="right" data-theme="b" data-transition="slide">Set me up!</a>
+        <a id="welcome_next_page" href="#confirm_known_user" data-role="button" data-icon="arrow-r" data-iconpos="right" data-theme="b" data-transition="slide">Set me up!</a>
       </div>
      </li>
 </ul>
@@ -164,7 +165,11 @@
 
 <script type="text/javascript" charset="utf-8">
   $("#confirm_occasion").live("pagebeforeshow", function(event, datat){
-    $(".current_occasion").html(current_occasion_name())
+    if ( current_occasion() ) {
+      $(".current_occasion").html(current_occasion.name())
+    } else {
+      $.mobile.changePage("#query_occasion")
+    }
   })
 </script>
 
@@ -473,7 +478,11 @@
         <tr>
           <td><h2>Who is in this photo?</h2></td>
           <td class="right">
+<<<<<<< HEAD
             <a class="no_underline" href="#">why</a> | <span class="no_underline ui-link" onclick="tag_done()">skip</span>
+=======
+            <a class="no_underline" href="#">why</a> | <a class="no_underline" href="#" onclick="tag_done()">skip</a>
+>>>>>>> f1195d2ceaa174d6611eb6f41acf3ab38b05c9d4
           </td>
         </tr>
       </table>
