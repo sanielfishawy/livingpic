@@ -2534,61 +2534,61 @@ a { color: #444340; }
 #Indicators { text-align: center; margin-top: 20px; }
 #Indicators span { display: inline-block; height: 10px; width: 10px; margin: 0 10px 0 0; padding: 0; -webkit-border-radius:5px; -moz-border-radius:5px; -o-border-radius:5px; border-radius:5px; background: #c5c5c5; overflow:hidden; }
 #Indicators span.current{ background: #EEBF02; }
-/* line 5, ../../../../../app/assets/stylesheets/patches/vendor/jquery_mobile/jquery_mobile_icons.css.scss */
+/* line 5, ../../../../app/assets/stylesheets/patches/jquery_mobile/jquery_mobile_icons.css.scss.erb */
 .ui-icon-loading {
-  background-image: url(/assets/jquery_mobile/ajax-loader.gif);
+  background-image: url("img/jquery_mobile/ajax-loader.gif");
 }
 
-/* line 8, ../../../../../app/assets/stylesheets/patches/vendor/jquery_mobile/jquery_mobile_icons.css.scss */
+/* line 8, ../../../../app/assets/stylesheets/patches/jquery_mobile/jquery_mobile_icons.css.scss.erb */
 .ui-icon-alt {
-  background-image: url(/assets/jquery_mobile/icons-18-black.png);
+  background-image: url("img/jquery_mobile/icons-18-black.png");
 }
 
-/* line 12, ../../../../../app/assets/stylesheets/patches/vendor/jquery_mobile/jquery_mobile_icons.css.scss */
+/* line 12, ../../../../app/assets/stylesheets/patches/jquery_mobile/jquery_mobile_icons.css.scss.erb */
 .ui-icon, .ui-icon-searchfield:after {
-  background-image: url(/assets/jquery_mobile/icons-18-white.png);
+  background-image: url("img/jquery_mobile/icons-18-white.png");
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min--moz-device-pixel-ratio: 1.5), only screen and (min-resolution: 240dpi) {
-  /* line 24, ../../../../../app/assets/stylesheets/patches/vendor/jquery_mobile/jquery_mobile_icons.css.scss */
+  /* line 25, ../../../../app/assets/stylesheets/patches/jquery_mobile/jquery_mobile_icons.css.scss.erb */
   .ui-icon-plus, .ui-icon-minus, .ui-icon-delete, .ui-icon-arrow-r,
   .ui-icon-arrow-l, .ui-icon-arrow-u, .ui-icon-arrow-d, .ui-icon-check,
   .ui-icon-gear, .ui-icon-refresh, .ui-icon-forward, .ui-icon-back,
   .ui-icon-grid, .ui-icon-star, .ui-icon-alert, .ui-icon-info, .ui-icon-home, .ui-icon-search, .ui-icon-searchfield:after,
   .ui-icon-checkbox-off, .ui-icon-checkbox-on, .ui-icon-radio-off, .ui-icon-radio-on {
-    background-image: url(/assets/jquery_mobile/icons-36-white.png);
+    background-image: url("img/jquery_mobile/icons-36-white.png");
     -moz-background-size: 776px 18px;
     -o-background-size: 776px 18px;
     -webkit-background-size: 776px 18px;
     background-size: 776px 18px;
   }
 
-  /* line 31, ../../../../../app/assets/stylesheets/patches/vendor/jquery_mobile/jquery_mobile_icons.css.scss */
+  /* line 32, ../../../../app/assets/stylesheets/patches/jquery_mobile/jquery_mobile_icons.css.scss.erb */
   .ui-icon-alt {
-    background-image: url(/assets/jquery_mobile/icons-36-black.png);
+    background-image: url("img/jquery_mobile/icons-36-black.png");
   }
 }
-/* line 7, ../../../../../app/assets/stylesheets/patches/vendor/photoswipe/photoswipe.css.scss */
+/* line 7, ../../../../app/assets/stylesheets/patches/photoswipe/photoswipe_icons.css.scss.erb */
 div.ps-toolbar div div.ps-toolbar-content {
-  background-image: url("/assets/photoswipe/icons.png");
+  background-image: url("img/photoswipe/icons.png");
 }
 
 /* Hi-res display */
 @media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (-moz-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 240dpi) {
-  /* line 17, ../../../../../app/assets/stylesheets/patches/vendor/photoswipe/photoswipe.css.scss */
+  /* line 17, ../../../../app/assets/stylesheets/patches/photoswipe/photoswipe_icons.css.scss.erb */
   div.ps-toolbar div div.ps-toolbar-content {
-    background-image: url("/assets/photoswipe/icons@2x.png");
+    background-image: url("img/photoswipe/icons@2x.png");
   }
 }
 /* Carousel */
-/* line 24, ../../../../../app/assets/stylesheets/patches/vendor/photoswipe/photoswipe.css.scss */
+/* line 24, ../../../../app/assets/stylesheets/patches/photoswipe/photoswipe_icons.css.scss.erb */
 div.ps-carousel-item-loading {
-  background: url("/assets/photoswipe/loader.gif") no-repeat center center;
+  background: url("img/photoswipe/loader.gif") no-repeat center center;
 }
 
-/* line 29, ../../../../../app/assets/stylesheets/patches/vendor/photoswipe/photoswipe.css.scss */
+/* line 29, ../../../../app/assets/stylesheets/patches/photoswipe/photoswipe_icons.css.scss.erb */
 div.ps-carousel-item-error {
-  background: url("/assets/photoswipe/error.gif") no-repeat center center;
+  background: url("img/photoswipe/error.gif") no-repeat center center;
 }
 @import url(project/npb-theme.css);
 /*
@@ -2657,7 +2657,7 @@ h1 {
 
 /* line 6, ../../app/assets/stylesheets/project/general.css.scss */
 h2 {
-  font-size: 18px;
+  font-size: 24px;
   margin: .6em 0em .3em;
 }
 
@@ -2682,29 +2682,39 @@ p {
   text-align: center;
 }
 
-/* line 15, ../../app/assets/stylesheets/project/general.css.scss */
+/* line 14, ../../app/assets/stylesheets/project/general.css.scss */
+.right {
+  text-align: right;
+}
+
+/* line 16, ../../app/assets/stylesheets/project/general.css.scss */
 .lighter {
   color: #666;
 }
 
-/* line 17, ../../app/assets/stylesheets/project/general.css.scss */
+/* line 18, ../../app/assets/stylesheets/project/general.css.scss */
 input::-webkit-input-placeholder {
   color: #888;
 }
 
-/* line 21, ../../app/assets/stylesheets/project/general.css.scss */
+/* line 22, ../../app/assets/stylesheets/project/general.css.scss */
 input:-moz-placeholder {
   color: #888;
 }
 
-/* line 25, ../../app/assets/stylesheets/project/general.css.scss */
+/* line 26, ../../app/assets/stylesheets/project/general.css.scss */
 .small {
   font-size: 10px;
 }
 
-/* line 26, ../../app/assets/stylesheets/project/general.css.scss */
+/* line 27, ../../app/assets/stylesheets/project/general.css.scss */
 .medium {
   font-size: 12px;
+}
+
+/* line 29, ../../app/assets/stylesheets/project/general.css.scss */
+a.no_underline, .no_underlin a {
+  text-decoration: none;
 }
 
 /* line 6, ../../app/assets/stylesheets/project/landing.css.scss */
@@ -2830,6 +2840,17 @@ input:-moz-placeholder {
   padding-top: 15px;
 }
 
+/* line 52, ../../app/assets/stylesheets/project/mobile.css.scss */
+.photo_overlay {
+  background: #444;
+  opacity: 0.95;
+}
+
+/* line 53, ../../app/assets/stylesheets/project/mobile.css.scss */
+.my_bg_pos {
+  background-position: -144px 50%;
+}
+
 /* line 8, ../../app/assets/stylesheets/project/photo.css.scss */
 .thumbnail {
   padding: 5px;
@@ -2840,4 +2861,23 @@ input:-moz-placeholder {
   width: 100%;
   padding: 0px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/*
+ * ERB CSS
+ * CSS that requires erb preprocessing goes here.
+ * GARF: Farhad todo: Not important but I was not able to get the helper method below in scope with the sprockets instance or environment 
+ * that is running when assets are being compiled and/or served. 
+ */
+/* line 26, ../../app/assets/stylesheets/application.css.scss.erb */
+.pic_background {
+  background-image: url("img/livingpic/pic1.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* line 28, ../../app/assets/stylesheets/application.css.scss.erb */
+#test_cam_img {
+  background-image: url(img/livingpic/camera.png);
 }

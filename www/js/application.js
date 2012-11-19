@@ -31108,13 +31108,26 @@ var Uri = function (uriString) {
 var jsUri = Uri;
 (function() {
 
-  $("#admin").live("pageshow", function() {
-    $("#admin .client").html(Config.is_running_on_device() ? "Packaged App" : "Browser");
-    $("#admin .client").css("color", Config.is_running_on_device() ? "red" : "blue");
-    if (HostHandler.INSTANCE == null) {
-      return new HostHandler;
-    }
+  $(document).bind("pageinit", function() {
+    return setup_admin_nav_bar();
   });
+
+  window.setup_admin_nav_bar = function() {
+    var link, _i, _len, _ref, _results;
+    _ref = $(".admin_nav a");
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      link = _ref[_i];
+      _results.push((function() {
+        var parent_page_id;
+        parent_page_id = $(link).parentsUntil("div[data-role='page']").last().parent().attr("id");
+        if ($(link).attr("class").match(parent_page_id) != null) {
+          return $(link).addClass("ui-btn-active ui-state-persist");
+        }
+      })());
+    }
+    return _results;
+  };
 
 }).call(this);
 (function() {
@@ -31520,10 +31533,10 @@ var jsUri = Uri;
 
   $(document).ready(function() {
     if (Config.is_running_on_device()) {
-      return $(document).bind("deviceready", function() {
-        console.log("device ready");
+      $(document).bind("deviceready", function() {
         return Boot.initialize();
       });
+      return new HostHandler;
     } else {
       return Boot.initialize();
     }
@@ -31535,11 +31548,35 @@ var jsUri = Uri;
         fresh: false
       });
       new HostHandler;
-      if (Config.is_running_on_device()) {
-        new GeoLocation;
-      }
-      console.log("before change page");
-      return $.mobile.changePage("#welcome");
+      new GeoLocation;
+      return $.mobile.changePage("#shortcuts");
+    }
+  };
+
+}).call(this);
+(function() {
+
+  $(document).ready(function() {
+    if (Config.is_running_on_device()) {
+      $(document).bind("deviceready", function() {
+        return Boot.initialize();
+      });
+      return new HostHandler;
+    } else {
+      return Boot.initialize();
+    }
+  });
+
+  $(document).bind("deviceready", function() {
+    return alert("device ready but no document ready.");
+  });
+
+  this.Boot = {
+    initialize: function() {
+      Contacts.prefetch({
+        fresh: false
+      });
+      return Config.init_app();
     }
   };
 
@@ -31621,24 +31658,13 @@ var jsUri = Uri;
       return;
     }
     clear_current_occasion();
-    set_current_occasion({
+    set_current_occasion(new Occasion({
       name: o_name.name
-    });
+    }));
     $.mobile.changePage("#estimate_population", {
       transition: "slide"
     });
-    return $.ajax({
-      url: Config.base_url() + "/occasions/create",
-      type: "POST",
-      data: {
-        name: o_name.name,
-        latitude: Config.location().latitude,
-        longitude: Config.location().longitude
-      },
-      success: function(response) {
-        return set_current_occasion(JSON.parse(response.responseText));
-      }
-    });
+    return post_current_occasion();
   };
 
 }).call(this);
@@ -31655,7 +31681,7 @@ var jsUri = Uri;
         options = {};
       }
       c = function() {};
-      if (!(contacts() != null) || Contacts.is_fresh(options)) {
+      if (!contacts() || Contacts.is_fresh(options)) {
         Contacts.full_list(c, options);
       }
       return contacts().length;
@@ -31665,7 +31691,7 @@ var jsUri = Uri;
       if (options == null) {
         options = {};
       }
-      if ((contacts() != null) && !Contacts.is_fresh(options)) {
+      if (contacts() && !Contacts.is_fresh(options)) {
         callback(contacts());
         return null;
       }
@@ -31960,6 +31986,10 @@ var jsUri = Uri;
 
       this.upload_img_success = __bind(this.upload_img_success, this);
 
+      this.upload = __bind(this.upload, this);
+
+      this.emulate_upload = __bind(this.emulate_upload, this);
+
       this.upload_img = __bind(this.upload_img, this);
 
       this.cd_gd_success = __bind(this.cd_gd_success, this);
@@ -31980,10 +32010,12 @@ var jsUri = Uri;
 
       Filer.ready_call_back = ready_callback;
       Filer.INSTANCE = this;
-      window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, (function(fs) {
-        Filer.INSTANCE.handle_fs(fs);
-        return ready_callback(Filer.INSTANCE);
-      }), null);
+      if (Config.is_running_on_device()) {
+        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, (function(fs) {
+          Filer.INSTANCE.handle_fs(fs);
+          return ready_callback(Filer.INSTANCE);
+        }), null);
+      }
     }
 
     Filer.prototype.handle_fs = function(fs) {
@@ -32069,28 +32101,43 @@ var jsUri = Uri;
       return console.log(this.current_directory.fullPath);
     };
 
-    Filer.prototype.upload_img = function(img_file, photo_params) {
-      var ft, img_uri, options, params;
+    Filer.prototype.upload_img = function(img_file, params) {
+      if (Config.is_running_on_device()) {
+        return this.upload(img_file, params);
+      } else {
+        return this.emulate_upload(img_file, params);
+      }
+    };
+
+    Filer.prototype.emulate_upload = function(img_file, params) {
+      return $.ajax({
+        url: "/photos/create",
+        type: "POST",
+        data: params,
+        dataType: "json",
+        success: function(response) {
+          return set_current_occasion(new Occasion(response));
+        }
+      });
+    };
+
+    Filer.prototype.upload = function(img_file, params) {
+      var ft, img_uri, options;
       options = new FileUploadOptions();
       options.fileKey = "file";
       options.mimeType = "image/jpeg";
       img_uri = typeof img_file === "string" ? img_file : img_file.fullPath;
       options.fileName = img_uri.substr(img_uri.lastIndexOf('/') + 1);
-      params = new Object();
-      params.photo = photo_params;
       options.params = params;
       ft = new FileTransfer();
       return ft.upload(img_uri, Config.base_url() + "/photos/create", Filer.INSTANCE.upload_img_success, Filer.INSTANCE.upload_img_fail, options);
     };
 
     Filer.prototype.upload_img_success = function(r) {
-      console.log("Code = " + r.responseCode);
-      console.log("Response = " + r.response);
-      return console.log("Sent = " + r.bytesSent);
+      return set_current_occasion(new Occasion(r.response));
     };
 
     Filer.prototype.upload_img_fail = function(error) {
-      console.log("An error has occurred: Code = " + error.code);
       console.log("upload error source " + error.source);
       return console.log("upload error target " + error.target);
     };
@@ -32113,36 +32160,61 @@ var jsUri = Uri;
     occasion_id = uri.getQueryParamValue("occasion_id");
     event.preventDefault();
     $.mobile.changePage("#gallery");
-    cache_full_dont_wait_for_response = localStorage["gallery_" + occasion_id] != null;
+    cache_full_dont_wait_for_response = GalleryCache.get(occasion_id);
     console.log("cache_full_dont_wait_for_response: " + cache_full_dont_wait_for_response);
-    $.ajax({
-      async: cache_full_dont_wait_for_response,
-      url: Config.base_url() + "/occasions/gallery_json",
-      data: {
-        occasion_id: occasion_id
-      },
-      success: function(response) {
-        var str;
-        try {
-          str = JSON.stringify(response);
-        } catch (error) {
-          localStorage.removeItem("gallery_" + occasion_id);
-          return;
+    if (occasion_id.toLowerCase() !== "new") {
+      $.ajax({
+        async: cache_full_dont_wait_for_response,
+        url: Config.base_url() + "/occasions/gallery_json",
+        data: {
+          occasion_id: occasion_id
+        },
+        success: function(response) {
+          return GalleryCache.set(occasion_id, response);
         }
-        return localStorage["gallery_" + occasion_id] = str;
-      }
-    });
-    occ_gal = JSON.parse(localStorage["gallery_" + occasion_id]);
-    window.gh = new GalleryHandler(occ_gal.occasion, occ_gal.gallery);
-    return gh.update_gallery_page();
+      });
+    }
+    occ_gal = GalleryCache.get(occasion_id);
+    new GalleryHandler(occ_gal.occasion, occ_gal.gallery);
+    return GalleryHandler.INSTANCE.update_gallery_page();
   });
 
   $("#gallery").live("pagehide", function(event, data) {
-    if (typeof gh !== "undefined" && gh !== null) {
-      window.gh.dispose();
+    if (GalleryHandler.INSTANCE != null) {
+      return GalleryHandler.INSTANCE.dispose();
     }
-    return window.gh = null;
   });
+
+  window.GalleryCache = {
+    prefix: "gallery_cache_",
+    get: function(id) {
+      if (localStorage["" + GalleryCache.prefix + id] != null) {
+        return JSON.parse(localStorage["" + GalleryCache.prefix + id]);
+      } else {
+        return false;
+      }
+    },
+    set: function(id, obj) {
+      try {
+        return localStorage["" + GalleryCache.prefix + id] = JSON.stringify(obj);
+      } catch (error) {
+        GalleryCache.clear(id);
+        $.error("GalleryCache Error: Could not stringify object.");
+      }
+    },
+    clear: function(id) {
+      return localStorage.removeItem("" + GalleryCache.prefix + id);
+    },
+    prepend_pic: function(id, pic) {
+      var occ_gal;
+      if (!(occ_gal = GalleryCache.get(id))) {
+        $.error("Error: GalleryCache.prepend_photo_to_gallery: Trying to prepend a photo to a gallery does not exist");
+        return;
+      }
+      occ_gal.gallery.unshift(pic);
+      return GalleryCache.set(id, occ_gal);
+    }
+  };
 
   window.GalleryHandler = (function() {
 
@@ -32164,15 +32236,7 @@ var jsUri = Uri;
 
     GalleryHandler.STATUS.LOADED = 2;
 
-    GalleryHandler.Instances = {};
-
-    GalleryHandler.Dispose = function(instance_id) {
-      return GalleryHandler.Instances[instance_id] = void 0;
-    };
-
-    GalleryHandler.Dispose_all_instances = function() {
-      return GalleryHandler.Instances = {};
-    };
+    GalleryHandler.INSTANCE = null;
 
     function GalleryHandler(occasion, image_list, options) {
       var i, url, _fn, _i, _len, _ref,
@@ -32218,8 +32282,9 @@ var jsUri = Uri;
 
       this.create_photo_swipe_instance = __bind(this.create_photo_swipe_instance, this);
 
+      GalleryHandler.INSTANCE = this;
       if (occasion == null) {
-        $.error("GalleryHander requires an occasion object");
+        $.error("GalleryHandler requires an occasion object");
       }
       this.occasion = occasion;
       if (image_list == null) {
@@ -32251,9 +32316,6 @@ var jsUri = Uri;
       this.num_left_to_load = this.num_images;
       this.next_batch_num = 0;
       this.delay = null;
-      this.this_instance_id = "gh_" + (new Date().getTime());
-      this.this_instance = this;
-      GalleryHandler.Instances[this.this_instance_id] = this.this_instance;
     }
 
     GalleryHandler.prototype.create_photo_swipe_instance = function() {
@@ -32277,9 +32339,9 @@ var jsUri = Uri;
     GalleryHandler.prototype.next_batch_to_load = function() {
       this.next_batch_num++;
       if (this.next_batch_num === 1) {
-        return this.image_list_not_set_to_load().slice(0, (this.FIRST_BATCH_SIZE - 1) + 1 || 9e9);
+        return this.image_list_not_set_to_load().slice(0, +(this.FIRST_BATCH_SIZE - 1) + 1 || 9e9);
       } else {
-        return this.image_list_not_set_to_load().slice(0, (GalleryHandler.BATCH_SIZE - 1) + 1 || 9e9);
+        return this.image_list_not_set_to_load().slice(0, +(GalleryHandler.BATCH_SIZE - 1) + 1 || 9e9);
       }
     };
 
@@ -32405,12 +32467,12 @@ var jsUri = Uri;
       clearInterval(this.delay);
       this.gallery_box.html("");
       this.photo_swipe.dispose();
-      return GalleryHandler.Dispose(this.this_instance_id);
+      return GalleryHandler.INSTANCE = null;
     };
 
     return GalleryHandler;
 
-  }).call(this);
+  })();
 
   ThumbWidthCalculator = (function() {
 
@@ -32468,9 +32530,48 @@ var jsUri = Uri;
 
 }).call(this);
 (function() {
+
+  window.get_user_info = function(user_id) {
+    return $.ajax({
+      url: Config.base_url() + "/users/show/" + user_id,
+      dataType: "json",
+      async: false,
+      beforeSend: function(x) {
+        if (x && x.overrideMimeType) {
+          return x.overrideMimeType("application/j-son;charset=UTF-8");
+        }
+      },
+      success: function(user) {
+        console.log(user);
+        set_current_user(user);
+        return $.mobile.changePage("#welcome", {
+          transition: "fade"
+        });
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        return alert("Error getting user info with status " + textStatus + " and errorThrown " + errorThrown);
+      }
+    });
+  };
+
+}).call(this);
+(function() {
+
+  $("#host").live("pageshow", function() {
+    $("#host .client").html(Config.is_running_on_device() ? "Packaged App" : "Browser");
+    $("#host .client").css("color", Config.is_running_on_device() ? "red" : "blue");
+    if (HostHandler.INSTANCE == null) {
+      return new HostHandler;
+    }
+  });
+
+}).call(this);
+(function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   window.HostHandler = (function() {
+
+    HostHandler.HOST_PAGE = "host";
 
     HostHandler.HOSTS = [
       {
@@ -32487,10 +32588,10 @@ var jsUri = Uri;
         uri: "www.livingpic.com"
       }, {
         name: "Sani Home",
-        uri: "192.168.1.65:3000"
+        uri: "192.168.1.86:3000"
       }, {
         name: "Sani Boat",
-        uri: "192.168.1.71:3000"
+        uri: "192.168.1.66:3000"
       }, {
         name: "Farhad Boat",
         uri: "192.168.1.69:3000"
@@ -32517,7 +32618,7 @@ var jsUri = Uri;
         return "http://" + HostHandler.INSTANCE.host_uri(HostHandler.INSTANCE.selected_host);
       } else {
         alert("No host selected. Please select a host");
-        $.mobile.changePage("#admin");
+        $.mobile.changePage("#" + HostHandler.HOST_PAGE);
         return "";
       }
     };
@@ -32535,6 +32636,8 @@ var jsUri = Uri;
 
       this.index_for_host = __bind(this.index_for_host, this);
 
+      this.status_trying = __bind(this.status_trying, this);
+
       this.handle_connection_error = __bind(this.handle_connection_error, this);
 
       this.handle_connection_ok = __bind(this.handle_connection_ok, this);
@@ -32547,6 +32650,7 @@ var jsUri = Uri;
 
       var h, i, _fn, _i, _len, _ref,
         _this = this;
+      HostHandler.INSTANCE = this;
       _ref = HostHandler.HOSTS;
       _fn = function() {
         return HostHandler.HOSTS_INDEX[h.uri] = i;
@@ -32560,7 +32664,6 @@ var jsUri = Uri;
       this.selected_host = null;
       this.determine_selected_host_first_time();
       this.update_selected_host_html();
-      HostHandler.INSTANCE = this;
     }
 
     HostHandler.prototype.determine_selected_host_first_time = function() {
@@ -32574,13 +32677,14 @@ var jsUri = Uri;
 
     HostHandler.prototype.on_host_selector_change = function() {
       this.selected_host = $("#host_select")[0].selectedIndex;
-      this.check_host();
-      return this.update_selected_host_html();
+      this.update_selected_host_html();
+      return this.check_host();
     };
 
     HostHandler.prototype.check_host = function() {
       var base_url,
         _this = this;
+      this.status_trying();
       $.mobile.allowCrossDomainPages = true;
       $.support.cors = true;
       base_url = this.selected_host != null ? "http://" + (this.host_uri(this.selected_host)) : "";
@@ -32608,8 +32712,8 @@ var jsUri = Uri;
     };
 
     HostHandler.prototype.handle_connection_ok = function() {
-      $("#admin .host_status").html("200 OK");
-      $("#admin .host_status").css("color", "green");
+      $("#" + HostHandler.HOST_PAGE + " .host_status").html("200 OK");
+      $("#" + HostHandler.HOST_PAGE + " .host_status").css("color", "green");
       if (this.selected_host != null) {
         this.update_selected_host_html();
       }
@@ -32619,8 +32723,12 @@ var jsUri = Uri;
     HostHandler.prototype.handle_connection_error = function(url, status, errorThrown) {
       var err_msg;
       err_msg = "Server Error: " + url + " -> " + status + ": " + errorThrown;
-      $("#admin .host_status").html(err_msg);
-      return $("#admin .host_status").css("color", "red");
+      $("#" + HostHandler.HOST_PAGE + " .host_status").html(err_msg);
+      return $("#" + HostHandler.HOST_PAGE + " .host_status").css("color", "red");
+    };
+
+    HostHandler.prototype.status_trying = function() {
+      return $("#" + HostHandler.HOST_PAGE + " .host_status").html("<span style='text-decoration:blink; color:blue'>Trying to reach host</span>");
     };
 
     HostHandler.prototype.index_for_host = function(host) {
@@ -32663,10 +32771,10 @@ var jsUri = Uri;
       }
       $("#host_select option").removeAttr("selected");
       if (this.selected_host != null) {
-        $("#admin .current_host").html("" + (this.host_name(this.selected_host)) + " - " + (this.host_uri(this.selected_host)));
+        $("#" + HostHandler.HOST_PAGE + " .current_host").html("" + (this.host_name(this.selected_host)) + " - " + (this.host_uri(this.selected_host)));
         $("#host_select option").eq(this.selected_host).attr("selected", true);
       } else {
-        $("#admin .current_host").html("None - please select a host");
+        $("#" + HostHandler.HOST_PAGE + " .current_host").html("None - please select a host");
       }
       try {
         return $("#host_select").selectmenu('refresh', true);
@@ -32680,262 +32788,6 @@ var jsUri = Uri;
   }).call(this);
 
 }).call(this);
-// NOTE: we are calling the app w/in app (yuk!) because the context of 'this' changes when we are in an event handler, 
-// at that point it points to the event and not to this object that we define
-var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-var app = {
-    location: null,
-    contacts: null,
-    timer: null,
-    
-    deviceready: function() {
-        // Was for testing only - no longer necessary
-        // this.report('deviceready');
-        alert("device ready")
-        return
-        console.log("device is ready");
-        this.getContacts();
-        app.bindButtons();
-        this.initUserState();
-        // Initialize the push notification code        
-        // Commented out to reduce log noise - this is for push notification
-        // initPushwoosh(cordova);
-    },
-    
-    
-    // Initialize the application - this is the stuff that comes from our server code 
-    // Keep it here for now for encapsulation
-    initUserState: function() {
-      var user = current_user();
-      console.log("current_user = "+user);
-      if (user)
-        handle_registration({"user":user}) 
-      else
-        handle_registration({"fresh":true}) 
-
-      initialize_view() ;
-      // app.getContacts()
-      // $.mobile.changePage("#invite");        
-    },
-    
-    bindButtons: function(){
-//        Bind to the front page buttons
-      $('.j_camera_trigger').click(app.takePicture)
-
-      // $('#launchCamera').click(app.takePicture)
-      // 
-      // // Load the album and choose the image from there
-      // $('#loadAlbum').click(function() {
-      //   app.loadFromAlbum();
-      // })
-      //  
-      // $('#loadContacts').click(function() {
-      //   app.getContacts();
-      // })
-      //   
-      // $('#loadGpsCoordinates').click(function() {
-      //   app.getLocation();
-      // })
-      // 
-      // $('#sendSms').click(function() {
-      //   app.sendSampleSms();
-      // })
-      
-      
-    },
-    
-    // ================
-    // = Take a Photo =
-    // ================
-    takePicture:function() {
-       // I think this provides a single photo in object format
-      // navigator.device.capture.captureImage(app.captureSuccess,app.captureError,{limit:1})
-       navigator.camera.getPicture(app.captureSuccess,app.captureError,
-       {
-         quality: 50,
-         destinationType: Camera.DestinationType.FILE_URI
-       })      
-    },
-    
-    captureError: function(error) {
-      alert("Error capturing the image: " + error);
-    },
-    captureSuccess:function(imageDataUrl) {
-      alert("Successfully captured the image at "+ imageDataUrl);
-      app.uploadPhoto(imageDataUrl);
-      $('#displayedImage').attr('src',imageDataUrl);
-    },
-    
-    // =========================
-    // = Load Photo from Album =
-    // =========================
-    loadFromAlbum: function() {
-      navigator.camera.getPicture(app.albumSuccess,app.albumError,
-      {
-        sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-        destinationType: Camera.DestinationType.FILE_URI
-      })
-    },
-    
-    albumSuccess:function(imageDataUrl) {
-      alert("Successfully got the image from the album at "+ imageDataUrl)
-      app.uploadPhoto(imageDataUrl);
-      
-    },
-    albumError:function(errorMessage) {
-      alert("Error loading from album")
-    },
-    
-    // Upload files to server
-    uploadPhoto: function(imageURI) {
-        var options = new FileUploadOptions();
-        options.fileKey="pic";
-        options.fileName=imageURI.substr(imageURI.lastIndexOf('/')+1);
-        // console.log("filename = " + options.fileName);
-        options.mimeType="image/jpeg";
-
-        var params = new Object();
-        params.latitude = app.location.coords.latitude;
-        params.longitude = app.location.coords.longitude;
-
-        options.params = params;
-
-        var ft = new FileTransfer();
-        alert("Starting the upload of "+ imageURI);
-        ft.upload(imageURI, encodeURI(Config.base_url() + "/photos/create"), app.uploadSuccess, app.uploadFailure, options);
-    },
-
-    uploadSuccess: function(r) {
-        alert("DONE uploading")
-        console.log("Code = " + r.responseCode);
-        console.log("Response = " + r.response);
-        console.log("Sent = " + r.bytesSent);
-    },
-
-    uploadFailure: function(error) {
-        alert("An error has occurred: Message = " + error.message);
-        console.log("upload error source " + error.source);
-        console.log("upload error target " + error.target);
-    },
-    
-
-    // ============
-    // = Contacts =
-    // ============
-    getContacts: function() {
-      navigator.contacts.find(["displayName","name", "phoneNumbers", "emails"],app.contactsSuccess,app.contactsError,
-      {
-        multiple:true,
-      })
-    },
-    
-    contactsSuccess:function(contacts) {
-      app.contacts = contacts;
-      alert("Successfully found " + contacts.length + " contacts")
-      // Now convert the contacts into a model that we want to save it for display
-      // 2012-09-12 - it's very much like it already is
-      // var formatted_contacts = new Array(contacts.length);
-      for ( i=0; i < contacts.length; i++ ) {
-        // formatted_contacts[i] = {fullname: contacts[i].name.formatted, id:contacts[i].id}
-        contacts[i].fullname = contacts[i].name.formatted;
-      }
-      set_contact_list(contacts);
-      create_indexed_contact_list();
-      // app.uploadContacts(contacts.slice(0,3))
-      // window.setup_auto_complete();
-    },
-    
-    // Returns an error object
-    contactsError:function(error) {
-      alert("Error loading contacts")
-    },
-    
-    uploadContacts:function(contacts) {
-      alert("posting " + contacts.length + " contacts to "+ Config.base_url() + "/invite");
-      $.ajax({
-        url: Config.base_url() + "/contacts",
-        type: "POST",
-        data: {contacts: JSON.stringify(contacts)},
-        beforeSend: function(x) {
-          if (x && x.overrideMimeType) {
-            x.overrideMimeType("application/j-son;charset=UTF-8");
-          }
-        },
-        success: function(result) {
-          // OK, seems like we sent the contacts OK, now do something
-          alert("Sent them OK")
-        },
-        error:function(jqXHR, textStatus, errorThrown) {
-          alert("Error sending contacts with status "+textStatus+" and errorThrown "+errorThrown);
-        }
-      })
-    },
-    
-    // =============
-    // = Locations =
-    // =============
-    getLocation: function() {
-      app.timer = new Date().getTime()
-      navigator.geolocation.getCurrentPosition(app.locationSuccess, app.locationError);
-    },
-    
-    locationSuccess: function(position) {
-      console.log(new Date().getTime() - app.timer)
-      alert("position = lat " + position.coords.latitude + ", long " + position.coords.longitude)
-      app.location = position;
-      return position;
-    },
-    
-    locationError: function(error) {
-      alert("Error getting location: "+error.message)
-    },
-    
-    // Device-based SMS
-    sendSampleSms: function(error) {
-      alert("Sending sample SMS")
-      window.plugins.smsComposer.showSMSComposerWithCB(app.smsCallback,'6502453537,4156020256',"Texting from my app")
-    },
-    
-    smsCallback: function(result) {
-      if(result == 0)
-      	alert("Cancelled");
-      else if(result == 1)
-      	alert("Sent");
-      else if(result == 2)
-      	alert("Failed.");
-      else if(result == 3)
-      	alert("Not Sent.");		
-    }
-        
-};
-
-window.handleOpenURL = function(url) {
-  console.log("url="+url);
-  var user_id;
-  var context_id = getUrlParam(url,'context_id');
-  if ( context_id ) {
-    console.log("Got context_id "+context_id);
-    handle_registration({context_id:context_id})    
-  } else if ( user_id = getUrlParam(url,'user_id') )  {
-    // get the user parameters and save them in local storage
-    console.log("Got user_id "+user_id);
-    handle_registration({user_id:user_id});
-  } else {
-    console.log("in handleOpenURL: got no user_id back");
-    handle_registration({unknown_user:true})
-    // let's go ahead and run handle_registration with new user    
-  }
-}
-
-// Here's a function to get the url parameters.  Call it with the parameter name
-// and it'll return the value or null
-getUrlParam = function(url,name) {
-    var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(url);
-    return (results && results[1]) || null
-}
-
-;
 (function() {
 
   window.goto_invite_page = function() {
@@ -33049,31 +32901,66 @@ getUrlParam = function(url,name) {
   };
 
   this.registered = function() {
-    return appState.get("registered");
+    return this.current_user().registered;
   };
 
   this.set_registered = function(obj) {
-    return appState.set("registered", obj);
+    return this.current_user().registered = true;
   };
 
-  this.clear_registered = function() {
-    return appState.clear("registered");
-  };
-
-  this.current_occasion = function() {
+  this.ls_current_occasion = function() {
     return appState.get("current_occasion");
   };
 
-  this.set_current_occasion = function(obj) {
+  this.set_ls_current_occasion = function(obj) {
     return appState.set("current_occasion", obj);
   };
 
-  this.clear_current_occasion = function() {
+  this.clear_ls_current_occasion = function() {
     return appState.clear("current_occasion");
   };
 
+  this.current_occasion = function() {
+    if (CurrentOccasion.INSTANCE == null) {
+      new CurrentOccasion;
+    }
+    return CurrentOccasion.INSTANCE.current_occasion();
+  };
+
+  this.set_current_occasion = function(obj) {
+    if (CurrentOccasion.INSTANCE == null) {
+      new CurrentOccasion;
+    }
+    return CurrentOccasion.INSTANCE.set_current_occasion(obj);
+  };
+
+  this.post_current_occasion = function() {
+    if (CurrentOccasion.INSTANCE == null) {
+      new CurrentOccasion;
+    }
+    return CurrentOccasion.INSTANCE.post();
+  };
+
+  this.clear_current_occasion = function() {
+    if (CurrentOccasion.INSTANCE == null) {
+      new CurrentOccasion;
+    }
+    return CurrentOccasion.INSTANCE.clear_current_occasion();
+  };
+
   this.current_occasion_name = function() {
-    return current_occasion().name;
+    if (current_occasion().name != null) {
+      return current_occasion().name;
+    } else {
+      return "";
+    }
+  };
+
+  this.current_location = function() {
+    var cl;
+    cl = GeoLocation.lat_long();
+    new GeoLocation;
+    return cl;
   };
 
   this.contacts = function() {
@@ -33100,8 +32987,23 @@ getUrlParam = function(url,name) {
     return appState.clear("contacts_directory");
   };
 
+  this.current_picture = function() {
+    return Picture.last();
+  };
+
   this.display_app_state = function() {
     return "Current_user: " + (current_user_id()) + " | Registered: " + (registered());
+  };
+
+  this.device_state = function() {
+    return {
+      user: current_user(),
+      occasion: current_occasion(),
+      contacts: AutoComplete.INSTANCE != null ? Contacts.find_contacts_by_ids(AutoComplete.INSTANCE.picked_ids()) : false,
+      location: current_location(),
+      picture: current_picture(),
+      client_type: Config.is_running_on_device() ? "device" : "browser"
+    };
   };
 
 }).call(this);
@@ -33110,13 +33012,20 @@ getUrlParam = function(url,name) {
 
   window.GeoLocation = (function() {
 
-    GeoLocation.loc = null;
+    GeoLocation.lat = null;
 
-    GeoLocation.lat = (GeoLocation.loc != null) && GoeLoc.loc.coords.latitude;
+    GeoLocation.long = null;
 
-    GeoLocation.long = (GeoLocation.loc != null) && GoeLoc.loc.coords.longitude;
+    GeoLocation.lat_long = function() {
+      return {
+        latitude: GeoLocation.lat,
+        longitude: GeoLocation.long
+      };
+    };
 
     GeoLocation.INSTANCE = null;
+
+    GeoLocation.prototype.pos = null;
 
     function GeoLocation() {
       this.location_error = __bind(this.location_error, this);
@@ -33129,12 +33038,18 @@ getUrlParam = function(url,name) {
     }
 
     GeoLocation.prototype.get_location = function() {
-      return navigator.geolocation.getCurrentPosition(GeoLocation.INSTANCE.location_success, GeoLocation.INSTANCE.location_error);
+      if (Config.is_running_on_device()) {
+        return navigator.geolocation.getCurrentPosition(GeoLocation.INSTANCE.location_success, GeoLocation.INSTANCE.location_error);
+      } else {
+        GeoLocation.lat = 37;
+        return GeoLocation.long = -120;
+      }
     };
 
     GeoLocation.prototype.location_success = function(position) {
-      console.log("position = lat " + position.coords.latitude + ", long " + position.coords.longitude);
-      return GeoLocation.loc = position;
+      this.pos = position;
+      GeoLocation.lat = position.coords.latitude;
+      return GeoLocation.long = position.coords.longitude;
     };
 
     GeoLocation.prototype.location_error = function(error) {
@@ -33149,22 +33064,235 @@ getUrlParam = function(url,name) {
 (function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  $("#occasions").live("pageshow", function(event) {
-    return $.ajax({
-      url: Config.base_url() + "/occasions/occasions_json",
-      success: function(response) {
-        return new OccasionsHandler(response).update_occasions_list();
+  window.Occasion = (function() {
+
+    Occasion.prototype.id = null;
+
+    Occasion.prototype.name = null;
+
+    Occasion.prototype.city = null;
+
+    Occasion.prototype.thumbnail = null;
+
+    Occasion.prototype.start_time = null;
+
+    function Occasion(obj) {
+      if (obj == null) {
+        obj = {};
       }
+      this["class"] = "Occasion";
+      this.id = obj.id;
+      this.name = obj.name;
+      this.city = obj.city;
+      this.thumbnail = obj.thumbnail;
+      this.start_time = (new Date).toUTCString();
+    }
+
+    return Occasion;
+
+  })();
+
+  window.CurrentOccasion = (function() {
+
+    CurrentOccasion.INSTANCE = null;
+
+    CurrentOccasion.prototype.occasion = false;
+
+    function CurrentOccasion() {
+      this.post = __bind(this.post, this);
+
+      this.before_save = __bind(this.before_save, this);
+
+      this.clear_current_occasion = __bind(this.clear_current_occasion, this);
+
+      this.set_current_occasion = __bind(this.set_current_occasion, this);
+
+      this.current_occasion = __bind(this.current_occasion, this);
+      CurrentOccasion.INSTANCE = this;
+    }
+
+    CurrentOccasion.prototype.current_occasion = function() {
+      this.occasion = ls_current_occasion() ? new Occasion(ls_current_occasion()) : false;
+      return this.occasion;
+    };
+
+    CurrentOccasion.prototype.set_current_occasion = function(obj) {
+      if (obj["class"] !== "Occasion") {
+        $.error("Error in CurrentOccasion.INSTANCE.set_current_occasion. Please pass an Occasion object when setting current_occasion.");
+      }
+      console.log("Setting current_occasion to:");
+      console.log(obj);
+      this.occasion = obj;
+      this.before_save();
+      set_ls_current_occasion(obj);
+      return this.occasion;
+    };
+
+    CurrentOccasion.prototype.clear_current_occasion = function() {
+      clear_ls_current_occasion();
+      return false;
+    };
+
+    CurrentOccasion.prototype.before_save = function() {
+      if (this.occasion.name != null) {
+        this.occasion.name = this.occasion.name.trim().capitalize_words();
+      }
+      if (this.occasion.id == null) {
+        return this.occasion.id = "new";
+      }
+    };
+
+    CurrentOccasion.prototype.post = function() {
+      return $.ajax({
+        url: Config.base_url() + "/occasions/create",
+        dataType: "json",
+        type: "POST",
+        data: device_state(),
+        success: function(response) {
+          set_current_occasion(new Occasion(response));
+          console.log("Created and posted and retrieved new occasion");
+          return console.log(new Occasion(response));
+        }
+      });
+    };
+
+    return CurrentOccasion;
+
+  })();
+
+}).call(this);
+(function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  $(document).ready(function() {
+    $("#occasion_for_pic").live("pagebeforeshow", function() {
+      if (Config.is_running_on_device()) {
+        $(".last_pic_background").css("background-image", "url(" + (current_pic().pic) + ")");
+      }
+      return new OccasionForPic;
+    });
+    return $("#occasion_for_pic .occasion_name").keypress(function() {
+      return OccasionForPic.INSTANCE.occasion_name_keypress();
     });
   });
 
-  window.OccasionsHandler = (function() {
+  window.OccasionForPic = (function() {
 
-    OccasionsHandler.LIST_ITEM_HTML = "<li>                     <a href='#'>                       <img/>                       <h1 class='occasion_name'/>                       <p>                         <span class='occasion_city de-emphasize1'/> &nbsp;                          <span class='occasion_date de-emphasize2'/>                        </p>                     </a>                   </li>";
+    OccasionForPic.INSTANCE = null;
 
-    OccasionsHandler.LIST_HTML = "<ul id='occasions_list' data-role='listview' class='npb-list'></ul>";
+    function OccasionForPic() {
+      this.change = __bind(this.change, this);
 
-    function OccasionsHandler(occasions, options) {
+      this.occasion_name_keypress = __bind(this.occasion_name_keypress, this);
+
+      this.upload_with_pic = __bind(this.upload_with_pic, this);
+
+      this.show_gallery = __bind(this.show_gallery, this);
+
+      this.add_local_pic_to_gallery_cache = __bind(this.add_local_pic_to_gallery_cache, this);
+
+      this.occasion_confirmed = __bind(this.occasion_confirmed, this);
+
+      this.create = __bind(this.create, this);
+
+      this.render_page = __bind(this.render_page, this);
+      OccasionForPic.INSTANCE = this;
+      this.render_page();
+    }
+
+    OccasionForPic.prototype.render_page = function() {
+      $("#occasion_for_pic .current_occasion").html(current_occasion().name);
+      $("#occasion_for_pic .enter_name_btn_b").hide();
+      if (current_occasion().name != null) {
+        $("#occasion_for_pic .yes_current_occasion").show();
+        return $("#occasion_for_pic .no_current_occasion").hide();
+      } else {
+        $("#occasion_for_pic .yes_current_occasion").hide();
+        return $("#occasion_for_pic .no_current_occasion").show();
+      }
+    };
+
+    OccasionForPic.prototype.create = function() {
+      var name;
+      name = $("#occasion_for_pic .occasion_name").first().val().trim();
+      if (name === "") {
+        alert("Please enter a name for this occasion.");
+        return false;
+      }
+      set_current_occasion(new Occasion({
+        name: name
+      }));
+      return this.occasion_confirmed();
+    };
+
+    OccasionForPic.prototype.occasion_confirmed = function() {
+      this.add_local_pic_to_gallery_cache();
+      this.show_gallery();
+      return this.upload_with_pic();
+    };
+
+    OccasionForPic.prototype.add_local_pic_to_gallery_cache = function() {
+      var occ;
+      occ = current_occasion();
+      if (!(GalleryCache.get(occ.id) && occ.id !== "new")) {
+        GalleryCache.set(occ.id, {
+          occasion: occ,
+          gallery: []
+        });
+      }
+      return GalleryCache.prepend_pic(occ.id, current_picture().pic);
+    };
+
+    OccasionForPic.prototype.show_gallery = function() {
+      return $.mobile.changePage("/gallery?occasion_id=" + (current_occasion().id));
+    };
+
+    OccasionForPic.prototype.upload_with_pic = function() {
+      return (new Filer).upload_img(current_picture().pic, device_state());
+    };
+
+    OccasionForPic.prototype.occasion_name_keypress = function() {
+      if ($("#occasion_for_pic .occasion_name").first().val().trim().length > 2) {
+        $("#occasion_for_pic .enter_name_btn_a").hide();
+        return $("#occasion_for_pic .enter_name_btn_b").show();
+      } else {
+        $("#occasion_for_pic .enter_name_btn_a").show();
+        return $("#occasion_for_pic .enter_name_btn_b").hide();
+      }
+    };
+
+    OccasionForPic.prototype.change = function() {
+      clear_current_occasion();
+      return this.render_page();
+    };
+
+    return OccasionForPic;
+
+  })();
+
+}).call(this);
+(function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  $(document).ready(function() {
+    return $("#occasions").live("pageshow", function(event) {
+      console.log("Occasions pageshow fired.");
+      return $.ajax({
+        url: Config.base_url() + "/occasions/occasions_json",
+        success: function(response) {
+          return new OccasionsRender(response).update_occasions_list();
+        }
+      });
+    });
+  });
+
+  window.OccasionsRender = (function() {
+
+    OccasionsRender.LIST_ITEM_HTML = "<li>                     <a href='#'>                       <img/>                       <h1 class='occasion_name'/>                       <p>                         <span class='occasion_city de-emphasize1'/> &nbsp;                          <span class='occasion_date de-emphasize2'/>                        </p>                     </a>                   </li>";
+
+    OccasionsRender.LIST_HTML = "<ul id='occasions_list' data-role='listview' class='npb-list'></ul>";
+
+    function OccasionsRender(occasions, options) {
       this.occasions = occasions;
       if (options == null) {
         options = {};
@@ -33174,14 +33302,14 @@ getUrlParam = function(url,name) {
       this.update_occasions_list = __bind(this.update_occasions_list, this);
 
       if (this.occasions == null) {
-        $.error("OccasionsHandler: requres an occasions object'");
+        $.error("OccasionsRender: requres an occasions object'");
       }
       this.page = options.page != null ? options.page : $("#occasions");
       this.content = this.page.children(":jqmData(role=content)");
-      this.list = $(OccasionsHandler.LIST_HTML);
+      this.list = $(OccasionsRender.LIST_HTML);
     }
 
-    OccasionsHandler.prototype.update_occasions_list = function() {
+    OccasionsRender.prototype.update_occasions_list = function() {
       var occasion, _fn, _i, _len, _ref,
         _this = this;
       _ref = this.occasions;
@@ -33197,9 +33325,9 @@ getUrlParam = function(url,name) {
       return $("#occasions_list").listview();
     };
 
-    OccasionsHandler.prototype.insert_occasion_in_list = function(occasion) {
+    OccasionsRender.prototype.insert_occasion_in_list = function(occasion) {
       var el;
-      el = $(OccasionsHandler.LIST_ITEM_HTML);
+      el = $(OccasionsRender.LIST_ITEM_HTML);
       el.find("a").attr("href", "/gallery?occasion_id=" + occasion.id);
       el.find("img").attr("src", occasion.thumbnail);
       el.find(".occasion_name").html(occasion.name);
@@ -33208,7 +33336,7 @@ getUrlParam = function(url,name) {
       return this.list.append(el);
     };
 
-    return OccasionsHandler;
+    return OccasionsRender;
 
   })();
 
@@ -33219,15 +33347,29 @@ getUrlParam = function(url,name) {
 
     function Picture() {}
 
-    Picture.last = null;
+    Picture.last_pic = {};
 
     Picture.QUALITY = 50;
+
+    Picture.last = function() {
+      if (Config.is_running_on_device()) {
+        return Picture.last_pic;
+      } else {
+        return {
+          pic: "img/livingpic/pic1.jpg",
+          time: (new Date).toUTCString()
+        };
+      }
+    };
 
     Picture.capture = function(callback) {
       if (callback == null) {
         callback = function(p) {
           return console.log(p);
         };
+      }
+      if (!Config.is_running_on_device()) {
+        return;
       }
       Picture.capture_callback = callback;
       return navigator.camera.getPicture(Picture.capture_success, Picture.capture_error, {
@@ -33241,7 +33383,10 @@ getUrlParam = function(url,name) {
     };
 
     Picture.capture_success = function(imageDataUrl) {
-      Picture.last = imageDataUrl;
+      Picture.last_pic = {
+        pic: imageDataUrl,
+        time: (new Date).toUTCString()
+      };
       return Picture.capture_callback(imageDataUrl);
     };
 
@@ -33251,6 +33396,9 @@ getUrlParam = function(url,name) {
           return console.log(p);
         };
       }
+      if (!Config.is_running_on_device()) {
+        return;
+      }
       Picture.pick_callback = callback;
       return navigator.camera.getPicture(Picture.pick_success, Picture.pick_error, {
         sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
@@ -33259,7 +33407,10 @@ getUrlParam = function(url,name) {
     };
 
     Picture.pick_uccess = function(imageDataUrl) {
-      Picture.last = imageDataUrl;
+      Picture.last_pic = {
+        pic: imageDataUrl,
+        time: (new Date).toUTCString()
+      };
       return Picture.pick_callback(imageDataUrl);
     };
 
@@ -33320,13 +33471,8 @@ getUrlParam = function(url,name) {
         url: Config.base_url() + "/users/show/" + opt.user_id,
         dataType: "json",
         async: false,
-        beforeSend: function(x) {
-          if (x && x.overrideMimeType) {
-            return x.overrideMimeType("application/j-son;charset=UTF-8");
-          }
-        },
         success: function(user) {
-          console.log("Saving current user to " + JSON.stringify(user));
+          console.log("Saving current user to " + user);
           set_current_user(user);
           return enter_the_app();
         },
@@ -33380,6 +33526,10 @@ getUrlParam = function(url,name) {
       alert("Please enter your last name");
       return;
     }
+    if (name.mobile_number === "") {
+      alert("Please enter your mobile number");
+      return;
+    }
     return $.ajax({
       url: Config.base_url() + "/users/new",
       type: "POST",
@@ -33399,7 +33549,19 @@ getUrlParam = function(url,name) {
 }).call(this);
 (function() {
 
-  window.capture_pic = function() {};
+  $("#tag_pic").live("pagebeforeshow", function() {
+    if (Config.is_running_on_device()) {
+      return $(".last_pic_background").css("background-image", "url(" + (current_picture().pic) + ")");
+    }
+  });
+
+  window.capture_pic = function() {
+    if (Config.is_running_on_device()) {
+      return Picture.capture(goto_tag_pic_page);
+    } else {
+      return goto_tag_pic_page();
+    }
+  };
 
   window.goto_tag_pic_page = function() {
     return Contacts.full_list(function(full_list) {
@@ -33412,18 +33574,41 @@ getUrlParam = function(url,name) {
   };
 
   window.tag_done = function() {
-    $.ajax({
-      url: Config.base_url() + "/tag",
-      type: "POST",
-      data: {
-        photo_id: 1,
-        tags: Contacts.find_contacts_by_ids(AutoComplete.INSTANCE.picked_ids())
-      }
-    });
-    return $.mobile.changePage("#app_running", {
+    return $.mobile.changePage("#occasion_for_pic", {
       transition: "slide"
     });
   };
+
+}).call(this);
+(function() {
+
+  window.DateTest = {
+    get_date: function() {
+      return $.ajax({
+        url: "/app/test_get_date",
+        success: function(r) {
+          return DateTest.result = r;
+        }
+      });
+    },
+    post_date: function() {
+      return $.ajax({
+        type: "POST",
+        url: "/app/test_post_date",
+        data: {
+          test_date: new Date
+        }
+      });
+    }
+  };
+
+}).call(this);
+(function() {
+
+  $(document).ready(function() {
+    $("#test_cam_img_js").css("border", "1px solid blue");
+    return $("#test_cam_img_js").css("background-image", "url('img/livingpic/camera.png')");
+  });
 
 }).call(this);
 (function() {
@@ -33578,7 +33763,20 @@ getUrlParam = function(url,name) {
   };
 
   window.lp_date_format = function(date) {
-    return Date.parse(date).toString("MMM d yyyy");
+    if (date == null) {
+      return "";
+    }
+    if (typeof date === "string") {
+      return Date.parse(date).toString("MMM d yyyy");
+    } else {
+      return date.toString("MMM d yyyy");
+    }
+  };
+
+  String.prototype.capitalize_words = function() {
+    return this.toLowerCase().replace(/^.|\s\S/g, function(a) {
+      return a.toUpperCase();
+    });
   };
 
   Array.prototype.max = function() {
@@ -33730,7 +33928,7 @@ getUrlParam = function(url,name) {
 	window.Code.Util
 ))
 ;
-// This is the manifest for the packaged app.s
+// This is the manifest for the packaged app.
 
 
 
