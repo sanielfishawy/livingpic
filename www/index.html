@@ -18,7 +18,7 @@
       window.WeinreServerURL = "http://www.trymyui.com:9170"
     </script>
     <!-- GARF: I noticed that cordova and phonegap are being loaded in our app several times by phonegap build. Need to fix this bug before shipping. Phonegap.js is included automatically by phonegap build and is different for each device. This following line tells phonegap build to include the appropriate phonegap.js. -->
-    <script type="text/javascript" src="phonegap.js"></script>
+    <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="js/application.js"></script>
   </head>
   
@@ -36,6 +36,7 @@
     handle_registration({}) 
   }
 </script>
+<!-- FTUI pages -->
 <div id="app_splash" data-role="page"  data-theme="c">
   
   <div id="splash" class="center window_height" data-role="content"  data-theme="c" >
@@ -82,11 +83,8 @@
   <script type="text/javascript" charset="utf-8">
   // See app.js for the javascript that animates this partial
 </script>
-<div data-role="footer" data-theme="c" data-id="ftui" data-position="fixed">
-  <h3 style="font-size:10px; font-weight:normal" class="display_app_state"></h3>
-  <span onclick="goto_invite_page()" data-role="button">Invite</span>
-  <a href="#estimate_population" data-role="button">Estimate Population</a>
-  <div data-role="button" onclick="handle_registration({fresh:true})">Start fresh</div>
+<div data-role="footer" data-position="fixed">
+  <a href="#host">Admin</a>
 </div>
 
   
@@ -124,11 +122,8 @@
   <script type="text/javascript" charset="utf-8">
   // See app.js for the javascript that animates this partial
 </script>
-<div data-role="footer" data-theme="c" data-id="ftui" data-position="fixed">
-  <h3 style="font-size:10px; font-weight:normal" class="display_app_state"></h3>
-  <span onclick="goto_invite_page()" data-role="button">Invite</span>
-  <a href="#estimate_population" data-role="button">Estimate Population</a>
-  <div data-role="button" onclick="handle_registration({fresh:true})">Start fresh</div>
+<div data-role="footer" data-position="fixed">
+  <a href="#host">Admin</a>
 </div>
 
 </div>
@@ -199,11 +194,8 @@
   <script type="text/javascript" charset="utf-8">
   // See app.js for the javascript that animates this partial
 </script>
-<div data-role="footer" data-theme="c" data-id="ftui" data-position="fixed">
-  <h3 style="font-size:10px; font-weight:normal" class="display_app_state"></h3>
-  <span onclick="goto_invite_page()" data-role="button">Invite</span>
-  <a href="#estimate_population" data-role="button">Estimate Population</a>
-  <div data-role="button" onclick="handle_registration({fresh:true})">Start fresh</div>
+<div data-role="footer" data-position="fixed">
+  <a href="#host">Admin</a>
 </div>
 
 </div>
@@ -234,11 +226,8 @@
   <script type="text/javascript" charset="utf-8">
   // See app.js for the javascript that animates this partial
 </script>
-<div data-role="footer" data-theme="c" data-id="ftui" data-position="fixed">
-  <h3 style="font-size:10px; font-weight:normal" class="display_app_state"></h3>
-  <span onclick="goto_invite_page()" data-role="button">Invite</span>
-  <a href="#estimate_population" data-role="button">Estimate Population</a>
-  <div data-role="button" onclick="handle_registration({fresh:true})">Start fresh</div>
+<div data-role="footer" data-position="fixed">
+  <a href="#host">Admin</a>
 </div>
 
 </div>
@@ -299,11 +288,8 @@
   <script type="text/javascript" charset="utf-8">
   // See app.js for the javascript that animates this partial
 </script>
-<div data-role="footer" data-theme="c" data-id="ftui" data-position="fixed">
-  <h3 style="font-size:10px; font-weight:normal" class="display_app_state"></h3>
-  <span onclick="goto_invite_page()" data-role="button">Invite</span>
-  <a href="#estimate_population" data-role="button">Estimate Population</a>
-  <div data-role="button" onclick="handle_registration({fresh:true})">Start fresh</div>
+<div data-role="footer" data-position="fixed">
+  <a href="#host">Admin</a>
 </div>
 
   
@@ -420,11 +406,8 @@
   <script type="text/javascript" charset="utf-8">
   // See app.js for the javascript that animates this partial
 </script>
-<div data-role="footer" data-theme="c" data-id="ftui" data-position="fixed">
-  <h3 style="font-size:10px; font-weight:normal" class="display_app_state"></h3>
-  <span onclick="goto_invite_page()" data-role="button">Invite</span>
-  <a href="#estimate_population" data-role="button">Estimate Population</a>
-  <div data-role="button" onclick="handle_registration({fresh:true})">Start fresh</div>
+<div data-role="footer" data-position="fixed">
+  <a href="#host">Admin</a>
 </div>
 
 </div>
@@ -475,23 +458,29 @@
   <script type="text/javascript" charset="utf-8">
   // See app.js for the javascript that animates this partial
 </script>
-<div data-role="footer" data-theme="c" data-id="ftui" data-position="fixed">
-  <h3 style="font-size:10px; font-weight:normal" class="display_app_state"></h3>
-  <span onclick="goto_invite_page()" data-role="button">Invite</span>
-  <a href="#estimate_population" data-role="button">Estimate Population</a>
-  <div data-role="button" onclick="handle_registration({fresh:true})">Start fresh</div>
+<div data-role="footer" data-position="fixed">
+  <a href="#host">Admin</a>
 </div>
 
 </div>
 
-<div id="tag_pic" class="auto_complete_page"  data-role="page"  data-theme="a" style="background-image:url(/assets/pic1.jpg); background-size: cover; background-repeat:no-repeat; background-position:center">
+<div id="tag_pic" class="auto_complete_page pic_background last_pic_background"  data-role="page"  data-theme="a" >
   
   <div class="ui-content" style="background:#333; opacity:0.85">
     
-    <div class="help"><h2>Who is in this photo?</h2></div>
+    <div class="help">
+      <table border="0" cellspacing="0" cellpadding="0" style="width:100%" >
+        <tr>
+          <td><h2>Who is in this photo?</h2></td>
+          <td class="right">
+            <a class="no_underline" href="#">why</a> | <span class="no_underline ui-link" onclick="tag_done()">skip</span>
+          </td>
+        </tr>
+      </table>
+    </div>
 
     <div class="picked_items_block">
-      <h2>In this photo <span class="current_occasion"></span></h2>
+      <h2>In this photo</h2>
 
       <div style="margin: 0px -15px"> 
         <span class="auto_complete_picked_items_box"></span>
@@ -513,11 +502,17 @@
 </div>
 
     </div> 
-
+        
     <ul class="auto_complete_search_results_box ui-listview" style="height:200px; overflow:scroll"></ul>
-
-
-  </div>  
+  </div>
+  
+  <script type="text/javascript" charset="utf-8">
+  // See app.js for the javascript that animates this partial
+</script>
+<div data-role="footer" data-position="fixed">
+  <a href="#host">Admin</a>
+</div>
+  
    
 </div>
 
@@ -550,11 +545,8 @@
   <script type="text/javascript" charset="utf-8">
   // See app.js for the javascript that animates this partial
 </script>
-<div data-role="footer" data-theme="a" data-id="ftui" data-position="fixed">
-  <h3 style="font-size:10px; font-weight:normal" class="display_app_state"></h3>
-  <span onclick="goto_invite_page()" data-role="button">Invite</span>
-  <a href="#estimate_population" data-role="button">Estimate Population</a>
-  <div data-role="button" onclick="handle_registration({fresh:true})">Start fresh</div>
+<div data-role="footer" data-position="fixed">
+  <a href="#host">Admin</a>
 </div>
 
 </div>
@@ -563,13 +555,22 @@
   
   <div data-role="header" data-position="fixed">
     <h1>My Occasions</h1>
-    <a class="npb-img-button ui-btn-right" href="#" data-mini="true" data-theme="b"><img alt="Camera" src="/assets/camera.png" style="height:22px" /></a>
+    <a class="npb-img-button ui-btn-right" href="#" data-mini="true" data-theme="b" onclick="window.capture_pic()">
+  <img src="img/livingpic/camera.png" style="height:22px"/>
+</a>
 
   </div>
   
   <div data-role="content">
   </div>
   
+  <script type="text/javascript" charset="utf-8">
+  // See app.js for the javascript that animates this partial
+</script>
+<div data-role="footer" data-position="fixed">
+  <a href="#host">Admin</a>
+</div>
+
 </div>
 <div id="gallery" data-role="page" data-theme="a" >
   <div data-role="header" data-position="fixed">
@@ -581,15 +582,70 @@
        <span class='occasion_date de-emphasize2'></span>
      </p>
     </h1>
-  	<a class="npb-img-button ui-btn-right" href="#" data-mini="true" data-theme="b"><img alt="Camera" src="/assets/camera.png" style="height:22px" /></a>
+  	<a class="npb-img-button ui-btn-right" href="#" data-mini="true" data-theme="b" onclick="window.capture_pic()">
+  <img src="img/livingpic/camera.png" style="height:22px"/>
+</a>
 
   </div>
   <div class="content"></div>
+  
+  <script type="text/javascript" charset="utf-8">
+  // See app.js for the javascript that animates this partial
+</script>
+<div data-role="footer" data-position="fixed">
+  <a href="#host">Admin</a>
 </div>
-<div id="admin" data-role="page"  data-theme="c">
+
+</div>
+
+<!-- In App pages -->
+<div id="occasion_for_pic"  class="pic_background last_pic_background" data-role="page"  data-theme="a">
+  
+  <div class="ui-content photo_overlay">
+    
+    <div class="no_current_occasion">
+      <h2>Whats the Occasion?</h2>
+      <table border="0" cellspacing="0" cellpadding="0" style="width:100%; padding-bottom:30px">
+        <col style="width:auto">
+        <col style="width:5em">
+        <tr>
+          <td><input type="text" class="occasion_name" data-inline="true" placeholder="Enter an occasion"/></td>
+          <td style="text-align:right">
+            <span class="enter_name_btn_a" data-role="button" data-mini="true" data-inline="true" onclick="OccasionForPic.INSTANCE.create()" data-theme="a">Enter</span>
+            <span class="enter_name_btn_b" data-role="button" data-mini="true" data-inline="true" onclick="OccasionForPic.INSTANCE.create()" data-theme="b">Enter</span>
+          </td>
+        </tr>
+      </table>      
+      <a class="no_underline" href="#" >There's no occasion</a>
+    </div>
+    
+    <div class="yes_current_occasion">
+      <h2>Occasion?</h2>
+      <div data-role="controlgroup" data-type="horizontal">
+        <span data-role="button" data-mini="true" data-inline="true" data-theme="b" onclick="OccasionForPic.INSTANCE.occasion_confirmed()">
+          Save in <span class="current_occasion"></span>
+        </span>        
+        <span data-role="button" data-mini="true" data-inline="true" onclick="OccasionForPic.INSTANCE.change()">Change</span>
+      </div>
+    </div>
+    
+  </div>  
+  
+  <script type="text/javascript" charset="utf-8">
+  // See app.js for the javascript that animates this partial
+</script>
+<div data-role="footer" data-position="fixed">
+  <a href="#host">Admin</a>
+</div>
+
+</div>
+
+
+<!-- Admin Pages -->
+<div id="host" data-role="page"  data-theme="c">
 
   <div data-role="header" data-theme="c"  data-id="ftui" data-position="fixed">
-  <h1>LivingPic</h1>
+  <h1>LivingPic - ADMIN</h1>
 </div>
 
 
@@ -613,22 +669,96 @@
     
   </div>
 
-  <script type="text/javascript" charset="utf-8">
-  // See app.js for the javascript that animates this partial
-</script>
-<div data-role="footer" data-theme="c" data-id="ftui" data-position="fixed">
-  <h3 style="font-size:10px; font-weight:normal" class="display_app_state"></h3>
-  <span onclick="goto_invite_page()" data-role="button">Invite</span>
-  <a href="#estimate_population" data-role="button">Estimate Population</a>
-  <div data-role="button" onclick="handle_registration({fresh:true})">Start fresh</div>
+  <div class="admin_nav" data-role="footer" data-id="admin_nav" data-position="fixed">
+	<div data-role="navbar">
+		<ul>
+  			<li><a class="host" href="#host">Host</a></li>
+  			<li><a class="users" href="#users">Users</a></li>
+  			<li><a class="shortcuts" href="#shortcuts">Shortcuts</a></li>
+  			<li><a class="more" href="#more">More</a></li>
+		</ul>
+	</div>
 </div>
 
+</div>
+  
+
+<div id="shortcuts" data-role="page"  data-theme="c">
+
+  <div data-role="header" data-theme="c"  data-id="ftui" data-position="fixed">
+  <h1>LivingPic - ADMIN</h1>
+</div>
+
+
+  <div data-role="content" >
+    <h1>Shortcuts</h1>
+    <span data-role="button" data-mini="true" onclick="window.capture_pic()">Capture Pic</span>
+    <span data-role="button" data-mini="true" onclick="alert(modjewel.require('weinre/target/Target').main())">Restart Weinre</span>
+    <a href="#occasions" data-role="button" data-mini="true">My Occasions</a>
+    <a href="#test_images" data-role="button" data-mini="true">Test Images</a>    
+    
+    <h2>From before...</h2>
+    <span onclick="goto_invite_page()" data-role="button" data-mini="true">Invite</span>
+    <a href="#estimate_population" data-role="button" data-mini="true">Estimate Population</a>
+    <div data-role="button" data-mini="true" onclick="handle_registration({fresh:true})">Start fresh</div>
+    
+  </div>
+  
+  
+  <div class="admin_nav" data-role="footer" data-id="admin_nav" data-position="fixed">
+	<div data-role="navbar">
+		<ul>
+  			<li><a class="host" href="#host">Host</a></li>
+  			<li><a class="users" href="#users">Users</a></li>
+  			<li><a class="shortcuts" href="#shortcuts">Shortcuts</a></li>
+  			<li><a class="more" href="#more">More</a></li>
+		</ul>
+	</div>
+</div>
+
+</div>
+  
+
+<div id="test_images" data-role="page"  data-theme="c">
+
+  <div data-role="header" data-theme="c"  data-id="ftui" data-position="fixed">
+  <h1>LivingPic - ADMIN</h1>
+</div>
+
+
+  <div data-role="content" >
+    <h1>Test Images</h1>
+    <h2>Jquery-mobile</h2>
+    <h3>Button created from data roles</h3>
+    <a href="" data-role="button" data-icon="arrow-l">Data roles button</a>
+    
+    
+    <h2 style="padding-top:2em">LivingPic</h2>
+    <h3>Image tag in HTML</h3>
+    <img src="img/livingpic/camera.png"/>
+    <h3>Image with CSS background for tag</h3>
+    <div id="test_cam_img" style="width:100px; height:100px; border:1px solid red"></div>
+    <h3>Image with JS background for tag</h3>
+    <div id="test_cam_img_js" style="width:100px; height:100px; border:1px solid red"></div>    
+  </div>
+  
+  
+  <div class="admin_nav" data-role="footer" data-id="admin_nav" data-position="fixed">
+	<div data-role="navbar">
+		<ul>
+  			<li><a class="host" href="#host">Host</a></li>
+  			<li><a class="users" href="#users">Users</a></li>
+  			<li><a class="shortcuts" href="#shortcuts">Shortcuts</a></li>
+  			<li><a class="more" href="#more">More</a></li>
+		</ul>
+	</div>
+</div>
 
 </div>
   
 
 
-    <script src="http://www.trymyui.com:9160/target/target-script-min.js#anonymous"></script>
+
     <!-- END NPB TEMPLATE GENERATED CODE -->
   </body>
 </html>
